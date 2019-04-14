@@ -55,6 +55,7 @@ class RushHour():
                 loadboard.append(row)
             # initialize board
             board = Board(i, loadboard, exitPosition)
+            print(loadboard)
             return board
     
     def load_cars(self):
@@ -83,14 +84,19 @@ class RushHour():
                                 if positions[i][j + 2] == char:
                                     # x = i -- y = j
                                     car = Car(char * 3, i, j, "horizontal", 3, False)
+                                    
+                                    car.moveability(self.board)
+                            
                                     cars.append(car)
                                     continue
                                 # add 'x' at end of list just to be sure index error wont occur 
                                 car = Car(char * 2, i, j, "horizontal", 2, False)
+                                car.moveability(self.board)
                                 cars.append(car)
                             # car found, but not a 3 tile car
                             except IndexError:
                                 car = Car(char * 2, i, j, "horizontal", 2, False)
+                                car.moveability(self.board)
                                 cars.append(car)
                                 continue
                     # no car found
@@ -104,18 +110,22 @@ class RushHour():
                             try:
                                 if positions[i + 2][j] == char:
                                     car = Car(char * 3, i, j, "vertical", 3, False)
+                                    car.moveability(self.board)
                                     cars.append(car)
                                     continue
                                 car = Car(char * 2, i, j, "vertical", 2, False)
+                                car.moveability(self.board)
                                 cars.append(car)
                             except IndexError:
                                 car = Car(char * 2, i, j, "vertical", 2, False)
+                                car.moveability(self.board)
                                 cars.append(car)
                                 continue
                     except IndexError:
                         continue
                 elif char == "r" and char not in taken_cars:
                     redcar = Car("redCar", i, j, "horizontal", 2, True)
+                    redcar.moveability(self.board)
                     taken_cars.append(char)
                     cars.append(redcar)        
         self.board.cars = cars
@@ -139,13 +149,13 @@ class RushHour():
         for i, car in enumerate(self.cars):
             print("No.%s: CAR: %s" % (i, car))
             print(car.direction)
-            print(f"X pos: {car.x} y pos: {car.y}")
+            print(f"X pos: {car.row} y pos: {car.col}")
             print('\n')
         print(self.board.width_height)        
         print(self.board)
         
         # brute force the game!       
-        n = 500
+        n = 1
         self.randommover(n)
         average = self.Average(self.allmoves) 
         print(f"avarage of {self.game} board for {n} runs = {average}")
@@ -167,10 +177,14 @@ class RushHour():
             moveables = ["left", "right", "up", "down"]
       
 
-            while redcar.y + 1 != self.board.exit_position:
+            while redcar.col + 1 != self.board.exit_position:
                 randy = randint(0, len(self.cars) - 1)
                 randomcar = self.cars[randy]
-                carmove = randomcar.moveable(self.board)
+                carmove = randomcar.moveable(self.board)                        
+                if redcar.moveability_list[1] > 2:
+                    redcar.move(self.board, "right")
+                    redcar.move(self.board, "right")
+                    redcar.move(self.board, "right")
                 if redcar.moveable(self.board) == "leftright":
                     rand = randint(0, 100)
                     if rand > 20:
@@ -196,6 +210,7 @@ class RushHour():
                 else:
                     continue    
                 moves += 1
+                print(self.board)
             print(moves)
             print(self.board)
             
@@ -205,66 +220,14 @@ class RushHour():
         return self.allmoves
 
 if __name__ == "__main__":
-    rushhour = RushHour("medium3")
+    rushhour = RushHour("easy")
     rushhour.playtest()
-    
-"""
-        # 
-        for i, row in enumerate(positions):
-            for j, char in enumerate(row):
-                # check for red car (which is always horizontal and of size 2)
-                if (char.isupper() or char in allowed) and char not in taken_cars:
-                    # trying to find a horizontal car
-                    try:
-                        if positions[i][j + 1] == char:
-                            taken_cars.append(char)
-                            # check for third 'block'
-                            try:
-                                if positions[i][j + 2] == char:
-                                    # x = i -- y = j
-                                    position = [str(i) + "." + str(j), str(i) + "." + str(j + 1), str(i) + "." + str(j + 2)]
-                                    car = Car(char * 3, i, j, position, "horizontal", 3, False)
-                                    cars.append(car)
-                                    continue
-                                # add 'x' at end of list just to be sure index error wont occur 
-                                position = [str(i) + "." + str(j), str(i) + "." + str(j + 1)] # removed x
-                                car = Car(char * 2, i, j, position, "horizontal", 2, False)
-                                cars.append(car)
-                            # car found, but not a 3 tile car
-                            except IndexError:
-                                position = [str(i) + "." + str(j), str(i) + "." + str(j + 1)] # removed x
-                                car = Car(char * 2, i, j, position, "horizontal", 2, False)
-                                cars.append(car)
-                                continue
-                    # no car found
-                    except IndexError:
-                        pass
 
-                    # trying to find a vertical car
-                    try:
-                        if positions[i + 1][j] == char:
-                            taken_cars.append(char)
-                            try:
-                                if positions[i + 2][j] == char:
-                                    position = [str(i) + "." + str(j), str(i + 1) + "." + str(j), str(i + 2) + "." + str(j)]
-                                    car = Car(char * 3, i, j, position, "vertical", 3, False)
-                                    cars.append(car)
-                                    continue
-                                position = [str(i) + "." + str(j), str(i + 1) + "." + str(j)] # removed x 
-                                car = Car(char * 2, i, j, position, "vertical", 2, False)
-                                cars.append(car)
-                            except IndexError:
-                                position = [str(i) + "." + str(j), str(i + 1) + "." + str(j)] # removed x
-                                car = Car(char * 2, i, j, position, "vertical", 2, False)
-                                cars.append(car)
-                                continue
-                    except IndexError:
-                        continue
-                elif char == "r" and char not in taken_cars:
-                    position = [str(i) + "." + str(j), str(i) + "." + str(j + 1)] # removed x
-                    redcar = Car("redCar", i, j, position, "horizontal", 2, True)
-                    taken_cars.append(char)
-                    cars.append(redcar)        
-        self.board.cars = cars
-        return cars
-"""
+    print(f"width_height: {rushhour.board.width_height}")
+
+    for car in rushhour.cars:
+        print(car.name)
+        print(car.moveability_list)
+    print(rushhour.board)
+
+

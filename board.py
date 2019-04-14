@@ -12,7 +12,7 @@ class Board():
         # represents the positions of all cars: [[],[]]
         self.positions = positions
         
-        # if red car hits the exit position, the game is over: 2.5
+        # if redcar.y hits the exit positions y position, the game is over.
         self.exit_position = exit_position   
 
         # list of all the cars in the grid
@@ -41,3 +41,5 @@ class Board():
                     returnstring += "| " + "_" + " "
             returnstring += "\n"
         return returnstring
+
+    
