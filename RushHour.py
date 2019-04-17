@@ -55,7 +55,11 @@ class RushHour():
             Bruteforce.randommover(self,  1)
             average = self.Average(self.allmoves) 
             print(f"avarage of {self.game} board for {n} runs = {average}")
-        
+
+    # def Breadthfirst(self)
+
+
+
     def Average(self, lst): 
         return sum(lst) / len(lst) 
     
@@ -65,13 +69,47 @@ class RushHour():
 
 if __name__ == "__main__":
     rushhour = RushHour("easy")
-    rushhour.playtest("bruteforce")
+    # rushhour.playtest("bruteforce")
 
     print(f"width_height: {rushhour.board.width_height}")
+    L_moves = ["F+1", "A-1"]
+    print(rushhour.board)
+    for i in L_moves:
+        CAR = None
+        carletter = i[0]
+        for car in rushhour.cars:
+            if car.name[0] == (carletter):
+                CAR = car
+                break
+        dir = CAR.direction
+        print(dir)
+        if dir == "horizontal":
+            if i[1] == "+":
+                move_dir = "right"
+            else:
+                move_dir = "left"
 
-    for car in rushhour.cars:
-        print(car.name)
-        print(car.moveability_list)
+        else:
+            if i[1] == "+":
+                move_dir = "down"
+            else:
+                move_dir = "up"
+        print(CAR.name)
+        print (move_dir)
+
+        CAR.move(rushhour.board, move_dir)
+    
+    print(rushhour.board)
+
+    # for car in rushhour.cars:
+    #     # print(car.name[0])
+    #     if car.moveability_list[0] is not 0:
+    #         print(car.name[0])
+    #         print(-1)
+    #     if car.moveability_list[1] is not 0:
+    #         print(car.name[0])
+    #         print(+1)
+
     print(rushhour.board)
     print(rushhour.initialboard)
 
