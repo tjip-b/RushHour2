@@ -1,10 +1,14 @@
 from board import Board
 from car import Car
+from load import Load
+from bruteforce import Bruteforce
+from breadthF import BreadthF
 from random import randint
 import time
 from colorama import init
 init()
 import sys
+import copy
 
 class RushHour():
     """
@@ -15,121 +19,12 @@ class RushHour():
         """
         Create the board within the game and create car objects
         """
-        self.board = self.load_board(f"data/{game}.txt")
-        self.cars = self.load_cars()
+        self.board = Load.load_board(self, f"data/{game}.txt")
+        self.cars = Load.load_cars(self)
         self.allmoves = []
-        self.initialboard = self.board
-        self.initialcars = self.cars
+        self.initialboard = copy.deepcopy(self.board)
+        self.initialcars = copy.deepcopy(self.cars)
         self.game = game
-
-    def load_board(self, filename):
-        """
-        initialize a Board object from the filename
-        """
-        # loadboard = [[],[]]
-        loadboard = []
-        redCarPosition = []
-        exitPosition = 0
-        allowed = ['!', '@', '#', '$', '%', '^', '&', '*', '/', '.', 'x', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        with open(filename, "r") as f:
-            # still have lines to load in
-            for i, line in enumerate(f):
-                row = []
-                if not line == "\n":
-                    line.strip('\n')
-                    for j, char in enumerate(line):
-                        # still have chars to add to array
-                        
-                        # add car positions 
-                        if char.isupper() or char in allowed:
-                            row.append(char)
-
-                        # red car position (example: [2.4, 2.5]) ~~ can be deleted
-                        elif char == "r":
-                            redCarPosition.append(str(i) + "." + str(j))
-                            row.append(char)
-
-                        # finish y position
-                        elif char == "e":
-                            exitPosition = j - 1
-                loadboard.append(row)
-            # initialize board
-            board = Board(i, loadboard, exitPosition)
-            print(loadboard)
-            return board
-    
-    def load_cars(self):
-        """
-        Searches all cars on the grid, creates car objects, append to list
-        """
-        positions = self.board.positions
-        # letters of cars which are already taken
-        taken_cars = []
-        # list of car objects
-        cars = []
-        # list of allowed car chars
-        allowed = ['!', '@', '#', '$', '%', '^', '&', '*', '/', '.', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        
-        # 
-        for i, row in enumerate(positions):
-            for j, char in enumerate(row):
-                # check for red car (which is always horizontal and of size 2)
-                if (char.isupper() or char in allowed) and char not in taken_cars:
-                    # trying to find a horizontal car
-                    try:
-                        if positions[i][j + 1] == char:
-                            taken_cars.append(char)
-                            # check for third 'block'
-                            try:
-                                if positions[i][j + 2] == char:
-                                    # x = i -- y = j
-                                    car = Car(char * 3, i, j, "horizontal", 3, False)
-                                    
-                                    car.moveability(self.board)
-                            
-                                    cars.append(car)
-                                    continue
-                                # add 'x' at end of list just to be sure index error wont occur 
-                                car = Car(char * 2, i, j, "horizontal", 2, False)
-                                car.moveability(self.board)
-                                cars.append(car)
-                            # car found, but not a 3 tile car
-                            except IndexError:
-                                car = Car(char * 2, i, j, "horizontal", 2, False)
-                                car.moveability(self.board)
-                                cars.append(car)
-                                continue
-                    # no car found
-                    except IndexError:
-                        pass
-
-                    # trying to find a vertical car
-                    try:
-                        if positions[i + 1][j] == char:
-                            taken_cars.append(char)
-                            try:
-                                if positions[i + 2][j] == char:
-                                    car = Car(char * 3, i, j, "vertical", 3, False)
-                                    car.moveability(self.board)
-                                    cars.append(car)
-                                    continue
-                                car = Car(char * 2, i, j, "vertical", 2, False)
-                                car.moveability(self.board)
-                                cars.append(car)
-                            except IndexError:
-                                car = Car(char * 2, i, j, "vertical", 2, False)
-                                car.moveability(self.board)
-                                cars.append(car)
-                                continue
-                    except IndexError:
-                        continue
-                elif char == "r" and char not in taken_cars:
-                    redcar = Car("redCar", i, j, "horizontal", 2, True)
-                    redcar.moveability(self.board)
-                    taken_cars.append(char)
-                    cars.append(redcar)        
-        self.board.cars = cars
-        return cars
                 
     def find(self):
         # while redcar_position niet op self.board.exit_position:
@@ -141,7 +36,7 @@ class RushHour():
         """
         print("test")
            
-    def playtest(self):
+    def playtest(self, method):
         # print out some information about the board and cars
         print(self.board.positions)
         for line in self.board.positions:
@@ -154,80 +49,115 @@ class RushHour():
         print(self.board.width_height)        
         print(self.board)
         
-        # brute force the game!       
-        n = 1
-        self.randommover(n)
-        average = self.Average(self.allmoves) 
-        print(f"avarage of {self.game} board for {n} runs = {average}")
-        
+        # brute force the game! 
+        if method == "bruteforce":
+                        
+            n = 1
+            Bruteforce.randommover(self,  1)
+            average = self.Average(self.allmoves) 
+            print(f"avarage of {self.game} board for {n} runs = {average}")
+
+    # def Breadthfirst(self)
+
+        elif method == "hi":
+            print(self.board.moveables)
+            self.board.get_moveables()
+            print(self.board.moveables)
+            
+
+    def BFS(self):
+        queue = []
+        archive = []
+        solutions = []
+        queue.insert(0, self.board)
+
+        print(int(self.board.width_height / 2))
+        print(self.board.positions[int(self.board.width_height / 2)][self.board.exit_position])
+
+        while queue:
+            startboard = queue.pop(0)
+            
+            movelist = startboard.get_moveables()
+            print(movelist)
+            moveboard = copy.deepcopy(startboard)
+            for i, moves in enumerate(movelist):
+                if moves == [0, 0]:
+                    continue
+                # two moves are possible
+                elif moves[0] > 0 and moves[1] > 0:
+                    print("bothways!")
+                    moveboard1 = copy.deepcopy(startboard)
+                    
+                    moveboard.cars[i].move(moveboard, 0)
+                    if moveboard.positions not in archive:
+                        archive.append(copy.deepcopy(moveboard.positions))
+                        solutions.append(copy.deepcopy(moveboard.positions))
+                        queue.insert(0, copy.deepcopy(moveboard))
+                        print(moveboard)
+                    moveboard1.cars[i].move(moveboard1, 1)
+                    if moveboard1.positions not in archive:
+                        archive.append(copy.deepcopy(moveboard1.positions))
+                        solutions.append(copy.deepcopy(moveboard1.positions))
+                        queue.insert(0, copy.deepcopy(moveboard1))
+                        print(moveboard1)
+                    
+                # move car left or up
+                elif moves[0] > 0:
+                    # print(f"NAME: {moveboard.cars[i].name} ROW: {moveboard.cars[i].row} COL: {moveboard.cars[i].col}")
+                    # print(moveboard)
+                    moveboard.cars[i].move(moveboard, 0) # 0 = move left or up
+                    if moveboard.positions in archive:
+                        continue
+                    # add to solution checker and archive lists
+                    archive.append(copy.deepcopy(moveboard.positions))
+                    solutions.append(copy.deepcopy(moveboard.positions))
+
+                    # print(f"NAME: {moveboard.cars[i].name} ROW: {moveboard.cars[i].row} COL: {moveboard.cars[i].col}")
+                    print(moveboard)
+                    # print(moveboard.get_moveables())
+                    
+                    queue.insert(0, copy.deepcopy(moveboard))
+                
+                # move car right or down
+                elif moves[1] > 0:
+                    moveboard.cars[i].move(moveboard, 1) # 1 = move right or down
+                    
+                    
+                    # check if board position has already been rached 
+                    if moveboard.positions in archive:
+                        continue
+                    archive.append(copy.deepcopy(moveboard.positions))
+                    solutions.append(copy.deepcopy(moveboard.positions))
+                    queue.insert(0, copy.deepcopy(moveboard))
+                    print(moveboard)
+                # reset moveboard 
+                moveboard = copy.deepcopy(startboard)
+            for solution in solutions:
+                if solution[int(startboard.width_height / 2 - 1)][startboard.exit_position] == 'r':
+                    print("Won! won! won! won! won! won!")
+                    print(solution)
+                    break
+            solutions.clear()
+
     def Average(self, lst): 
         return sum(lst) / len(lst) 
     
     def Reset(self):
-        self.board = self.load_board(f"data/{self.game}.txt")
-        self.cars = self.load_cars()
-
-    def randommover(self, amount):
-        for i in range(0, amount): 
-            for i, car in enumerate(self.cars):
-                if car.red_car:
-                    redcar = self.cars[i]
-                    break
-            moves = 0
-            moveables = ["left", "right", "up", "down"]
-      
-
-            while redcar.col + 1 != self.board.exit_position:
-                randy = randint(0, len(self.cars) - 1)
-                randomcar = self.cars[randy]
-                carmove = randomcar.moveable(self.board)                        
-                if redcar.moveability_list[1] > 2:
-                    redcar.move(self.board, "right")
-                    redcar.move(self.board, "right")
-                    redcar.move(self.board, "right")
-                if redcar.moveable(self.board) == "leftright":
-                    rand = randint(0, 100)
-                    if rand > 20:
-                        redcar.move(self.board, "right")
-                    else:
-                        redcar.move(self.board, "left")
-                    moves += 1
-                    continue
-                if carmove in moveables:
-                    randomcar.move(self.board, carmove)
-                elif carmove == "leftright": 
-                    rand = randint(0, 1)
-                    if rand == 0:
-                        randomcar.move(self.board, "left")
-                    else:
-                        randomcar.move(self.board, "right")
-                elif carmove == "updown":
-                    rand = randint(0, 1)
-                    if rand == 0:
-                        randomcar.move(self.board, "up")
-                    else:
-                        randomcar.move(self.board, "down")
-                else:
-                    continue    
-                moves += 1
-                print(self.board)
-            print(moves)
-            print(self.board)
-            
-            self.Reset()
-            self.allmoves.append(moves)
-            
-        return self.allmoves
+        self.board = Load.load_board(self, f"data/{self.game}.txt")
+        self.cars = Load.load_cars(self)
 
 if __name__ == "__main__":
-    rushhour = RushHour("easy")
-    rushhour.playtest()
-
-    print(f"width_height: {rushhour.board.width_height}")
-
-    for car in rushhour.cars:
-        print(car.name)
-        print(car.moveability_list)
-    print(rushhour.board)
-
-
+    rushhour = RushHour("supereasy")
+    # print(rushhour.board)
+    # print(rushhour.board.empty)
+    rushhour.BFS()
+    # BreadthF.BreadthFirst(rushhour)
+    # print(rushhour.board)
+    # for car in rushhour.cars:
+    #     print(car.name)
+    #     print(car.col, car.row)
+    # Car.move3(rushhour.cars[0], -1)
+    # print(rushhour.cars[0].col, rushhour.cars[0].row)
+    # rushhour.playtest("bruteforce")
+    # print(rushhour.board.positions)
+     

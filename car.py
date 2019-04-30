@@ -9,7 +9,7 @@ class Car():
         self.row = row
         self.col = col
 
-        # horizontal or vertical
+        # horizontal == 0 or vertical == 1
         self.direction = direction
 
         # cars are always 2 or 3 tiles big
@@ -93,63 +93,113 @@ class Car():
                 else: 
                     return "none"
 
-    def move(self, board, move_dir):
+    def move3(self, move):
+        if self.direction == "horizontal":
+            self.col += move
+        if self.direction == "vertical":
+            self.row += move
+        
+
+
+    def move2(self, board, move_dir):
         """ Tries to move car on the board.
             Returns board with moved car and changes X and Y coordinates of car object
             Nothing changes if car was not moveable in the first place.
         """
         if move_dir == "right":
             # failsafe: do not move through other cars on board
-            if board.positions[self.row][self.col + self.size].isupper() or board.positions[self.row][self.col + self.size] == 'r':
-                print("No movement!")
-                return board
+           
+            board.positions[self.row][self.col + self.size] = self.name[0]
+            board.positions[self.row][self.col] = "x"
             
-            # give board correct new positions (characters)
-            else:
-                board.positions[self.row][self.col + self.size] = self.name[0]
-                board.positions[self.row][self.col] = "x"
-
-                # change car objects positions
-                self.col = self.col + 1
-                return board
+            # change car objects positions
+            self.col = self.col + 1
+            return board
 
         elif move_dir == "left":     
-            if board.positions[self.row][self.col - 1].isupper() or board.positions[self.row][self.col - 1] == 'r':
-                print("No movement!")
-                return board
-            else: 
-                board.positions[self.row][self.col - 1] = self.name[0]
-                board.positions[self.row][self.col + self.size - 1] = "x"
-                self.col = self.col - 1
-                return board
+           
+            board.positions[self.row][self.col - 1] = self.name[0]
+            board.positions[self.row][self.col + self.size - 1] = "x"
+            self.col = self.col - 1
+            return board
 
         elif move_dir == "up":
-            #print(board.positions[self.row - 1][self.col])
-            if board.positions[self.row - 1][self.col].isupper() or board.positions[self.row - 1][self.col] == 'r':
-                print("No movement!")
-                return board
-            else:
-                board.positions[self.row - 1][self.col] = self.name[0]
-                board.positions[self.row + (self.size - 1)][self.col] = "x"
-                self.row = self.row - 1
-                return board
+        
+            board.positions[self.row - 1][self.col] = self.name[0]
+            board.positions[self.row + (self.size - 1)][self.col] = "x"
+            self.row = self.row - 1
+            return board
+
         elif move_dir == "down":            
-            try:    
-                if board.positions[self.row + self.size][self.col].isupper() or board.positions[self.row + self.size][self.col] == 'r':
-                    print("No movement!")
-                    return board
-            except IndexError:
-                print("Movement out of bounds")
-                return board
-            else: 
-                board.positions[self.row][self.col] = "x"            
-                board.positions[self.row + self.size][self.col] = self.name[0]                
-                self.row = self.row + 1
-                return board
+            
+          
+            board.positions[self.row][self.col] = "x"            
+            board.positions[self.row + self.size][self.col] = self.name[0]                
+            self.row = self.row + 1
+            return board
         else:
             return board
 
+
+    def move(self, board, move_dir):
+        """ Tries to move car on the board.
+            Returns board with moved car and changes X and Y coordinates of car object
+            Nothing changes if car was not moveable in the first place.
+        """
+        if self.direction == "horizontal":
+            if move_dir == 1: # RIGHT
+                # failsafe: do not move through other cars on board
+                if board.positions[self.row][self.col + self.size].isupper() or board.positions[self.row][self.col + self.size] == 'r':
+                    print("No movement!")
+                    return board
+                
+                # give board correct new positions (characters)
+                else:
+                    board.positions[self.row][self.col + self.size] = self.name[0]
+                    board.positions[self.row][self.col] = "x"
+
+                    # change car objects positions
+                    self.col = self.col + 1
+                    return board
+
+            elif move_dir == 0: # LEFT
+                if board.positions[self.row][self.col - 1].isupper() or board.positions[self.row][self.col - 1] == 'r':
+                    print("No movement!")
+                    return board
+                else: 
+                    board.positions[self.row][self.col - 1] = self.name[0]
+                    board.positions[self.row][self.col + self.size - 1] = "x"
+                    self.col = self.col - 1
+                    return board
+        else:
+            if move_dir == 0: # UP
+                #print(board.positions[self.row - 1][self.col])
+                if board.positions[self.row - 1][self.col].isupper() or board.positions[self.row - 1][self.col] == 'r' or self.row - 1 < 0:
+                    print("No movement!")
+                    return board
+                else:
+                    board.positions[self.row - 1][self.col] = self.name[0]
+                    board.positions[self.row + (self.size - 1)][self.col] = "x"
+                    self.row = self.row - 1
+                    return board
+            elif move_dir == 1:     # DOWN        
+                try:    
+                    if board.positions[self.row + self.size][self.col].isupper() or board.positions[self.row + self.size][self.col] == 'r':
+                        print("No movement!")
+                        return board
+                except IndexError:
+                    print("Movement out of bounds")
+                    return board
+                else: 
+                    board.positions[self.row][self.col] = "x"            
+                    board.positions[self.row + self.size][self.col] = self.name[0]                
+                    self.row = self.row + 1
+                    return board
+            else:
+                return board
+
     def moveability(self, board):
+        self.moveability_list = [0, 0] 
         """ Checks if car is moveable.
             Returns string of: (leftright, updown, right, left, down, up or none) based on movability
         """
@@ -175,7 +225,7 @@ class Car():
                 move_left = board.positions[self.row][left]
 
             # try to move left and right
-            print (left)
+            # print (left)
             while move_right == "x":
                 # print(f"right: {right}")
                 # print (board.width_height)

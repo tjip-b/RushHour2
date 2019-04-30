@@ -5,7 +5,7 @@ class Board():
     The board where the game takes place.
     The game is represented by a grid with different chars in it, which represent the cars.
     """
-    def __init__(self, width_height, positions, exit_position):       
+    def __init__(self, width_height, positions, exit_position, empty):       
         # width and height are always the same (starts counting from 0!)
         self.width_height = width_height
         
@@ -17,6 +17,10 @@ class Board():
 
         # list of all the cars in the grid
         self.cars = []
+
+        self.empty = empty
+
+        self.moveables = []
         
 
     def bounds(self, pos):
@@ -41,5 +45,12 @@ class Board():
                     returnstring += "| " + "_" + " "
             returnstring += "\n"
         return returnstring
+
+    def get_moveables(self):
+        self.moveables.clear()
+        for car in self.cars:
+            car.moveability(self)
+            self.moveables.append(car.moveability_list)
+        return self.moveables
 
     
