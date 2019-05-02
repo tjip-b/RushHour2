@@ -2,12 +2,13 @@ from board import Board
 from car import Car
 from load import Load
 from bruteforce import Bruteforce
+from breadthF import BreadthF
 from random import randint
 import time
 from colorama import init
-
 init()
 import sys
+import copy
 
 class RushHour():
     """
@@ -21,8 +22,8 @@ class RushHour():
         self.board = Load.load_board(self, f"data/{game}.txt")
         self.cars = Load.load_cars(self)
         self.allmoves = []
-        self.initialboard = self.board
-        self.initialcars = self.cars
+        self.initialboard = copy.deepcopy(self.board)
+        self.initialcars = copy.deepcopy(self.cars)
         self.game = game
                 
     def find(self):
@@ -68,49 +69,16 @@ class RushHour():
         self.cars = Load.load_cars(self)
 
 if __name__ == "__main__":
-    rushhour = RushHour("easy")
-    # rushhour.playtest("bruteforce")
-
-    print(f"width_height: {rushhour.board.width_height}")
-    L_moves = ["F+1", "A-1"]
-    print(rushhour.board)
-    for i in L_moves:
-        CAR = None
-        carletter = i[0]
-        for car in rushhour.cars:
-            if car.name[0] == (carletter):
-                CAR = car
-                break
-        dir = CAR.direction
-        print(dir)
-        if dir == "horizontal":
-            if i[1] == "+":
-                move_dir = "right"
-            else:
-                move_dir = "left"
-
-        else:
-            if i[1] == "+":
-                move_dir = "down"
-            else:
-                move_dir = "up"
-        print(CAR.name)
-        print (move_dir)
-
-        CAR.move(rushhour.board, move_dir)
-    
-    print(rushhour.board)
-
+    rushhour = RushHour("easy3")
+    # print(rushhour.board)
+    # print(rushhour.board.empty)
+    BreadthF.BreadthFirst(rushhour, rushhour.board, rushhour.cars)
+    # print(rushhour.board)
     # for car in rushhour.cars:
-    #     # print(car.name[0])
-    #     if car.moveability_list[0] is not 0:
-    #         print(car.name[0])
-    #         print(-1)
-    #     if car.moveability_list[1] is not 0:
-    #         print(car.name[0])
-    #         print(+1)
-
-    print(rushhour.board)
-    print(rushhour.initialboard)
-
-
+    #     print(car.name)
+    #     print(car.col, car.row)
+    # Car.move3(rushhour.cars[0], -1)
+    # print(rushhour.cars[0].col, rushhour.cars[0].row)
+    # rushhour.playtest("bruteforce")
+    # print(rushhour.board.positions)
+     

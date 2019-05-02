@@ -14,6 +14,7 @@ class Load():
         loadboard = []
         redCarPosition = []
         exitPosition = 0
+        empty = []
         allowed = ['!', '@', '#', '$', '%', '^', '&', '*', '/', '.', 'x', '1', '2', '3', '4', '5', '6', '7', '8', '9']
         with open(filename, "r") as f:
             # still have lines to load in
@@ -22,6 +23,7 @@ class Load():
                 if not line == "\n":
                     line.strip('\n')
                     for j, char in enumerate(line):
+                        
                         # still have chars to add to array
                         
                         # add car positions 
@@ -36,10 +38,15 @@ class Load():
                         # finish y position
                         elif char == "e":
                             exitPosition = j - 1
+                        
+                        
+                        if char == "x":
+                            empty.append([j, i])
+                        
                 loadboard.append(row)
             # initialize board
-            board = Board(i, loadboard, exitPosition)
-            print(loadboard)
+            board = Board(i, loadboard, exitPosition, empty)
+            # print(loadboard)
             return board
     
     def load_cars(self):
