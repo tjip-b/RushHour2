@@ -3,134 +3,172 @@ from board import Board
 from car import Car 
 import copy
 import time
+
 class BreadthF():
     def __init__ (self, queue):
         self.queue = [] 
 
+    # implementation of a breadthfirst search method
+    def BreadthFirst(self, initialboard, initialcars):        
 
-    def BreadthFirst(self, initialboard, initialcars):
+        # set needed variables
         start = time.time()
         self.initialboard = copy.deepcopy(initialboard)
-        self.initalcars = copy.deepcopy(initialcars)
-        carlist = []
+        self.initialcars = copy.deepcopy(initialcars)
         queue = []
-        number_of_moves = 0
-        # print(self.board)
+        carlist = []
+        n = 0
 
-        print(queue)
-        # Find first moveable options and place them in the queue
-        # print(self.board)
+        # find first moveable options and place them in the queue
         for car in self.cars:
+
+            # check which cars are moveable
             car.moveability(self.board)
-            # print(f"{car.col} , {car.row}")
-            # print(car.name)
-            # print(car.moveability_list)
+
+            # if car is moveable to the left or upwards
             if car.moveability_list[0] is not 0:
-                queue.append([car.name[0] + "-1"])
+                
+                # add all number of steps as moves to the queue
+                for i in range(1, car.moveability_list[0] + 1):
+                    queue.append([car.name[0] + "-" + str(i)])
+
+            # if car is moveable to the right or downwards
             if car.moveability_list[1] is not 0:
-                queue.append([car.name[0] + "+1"])
-        print(self.initialboard)
-        print(queue)    
-        BoardCopy = copy.deepcopy(self.board.positions)
-        carlist.append(BoardCopy)
+
+                # add all number of steps as moves to the queue
+                for i in range(1, car.moveability_list[1] + 1):
+                    queue.append([car.name[0] + "+" + str(i)])
+
+        # set needed for pre pruning which contains all visited boards. 
+        moves_set = set()
+
+        # make a dictionary with all the cars, which is used later.
+        cars_dictionary = {}
+        for car in self.cars:
+            cars_dictionary[car.name[0]] = 0
+        
+        # append dictionary to set and list. it is added as a string to the set so it can be hashed. 
+        moves_set.add(str(cars_dictionary))
+
+        # find the initial position of the red car and make an object redcar 
         for car in self.cars:
             if car.name[0] == "r":
                 redcarposition_inital = copy.deepcopy(car.col)
 
-        # For later use, now just with a n in range so there is no risk for crashing terminals
-        # while queue and len(queue) < 1000 and self.cars.redcar is not redcar_position: 
-        for n in range (0,1500000):
-            
+        # go on till solution is found or queue is empty
+        while queue:
+            # set everything to the initiak state
             self.board = copy.deepcopy(self.initialboard)
             self.cars = copy.deepcopy(self.initialcars)
-            
-            # print(redcarposition)
 
-            s = queue.pop(0) 
-            print(f"n = {n}")
-            print(s)
+            # make a copy of the "standard" car dictionary
+            dictcopy = copy.deepcopy(cars_dictionary)
             
+            # take the first item from the queue and pop it.
+            s = queue.pop(0) 
+
+            # print in which iteration we are and the current movelist
+            print(f"n = {n}")
+            n += 1
+            print(s)
+
+            # iterate through the move commands in s
             for i in s:
+
+                # initialise CAR
                 CAR = None
                 carletter = i[0]
+
+                # set CAR to the car that is in the move command
                 for car in self.cars:
                     if car.name[0] == (carletter):
                         CAR = car
                         break
-                dir = CAR.direction
-                if dir == "horizontal":
-                    if i[1] == "+":
-                        move_dir = "right"
-                    else:
-                        move_dir = "left"
-
-                else:
-                    if i[1] == "+":
-                        move_dir = "down"
-                    else:
-                        move_dir = "up"
-                number_of_moves = i[2]
-                # print(car.name)
-                # print(move_dir)
-
-                CAR.move2(self.board, move_dir)         
                 
+                # check if the movement is right or up (+) or left or down (-)
+                if i[1] == "+":
+                    move = int(i[2])
+                else:
+                    move = -int(i[2])
+                
+                # change the state of the board in the dictionary  
+                dictcopy[carletter] += move
+                
+                # execute the move
+                CAR.move3(move) 
+        
+            # build the board after all the moves are executed
+            self.board = Board.build(1, self.board.width_height + 1, self.cars)
 
-            for i, car in enumerate(self.cars):
-                if car.red_car:
-                    redcar = self.cars[i]
-                    break
+            # create an object for the red car, named redcar
+            for car in self.cars:
+                if car.name[0] == "r":
+                    redcar = car
             
-            if redcar.col + 1 == self.board.exit_position:
+            # check if a solution is found
+            if redcar.col == self.board.width_height-1:
                 print(s)
                 print("Gewonnen!")
                 end = time.time()
-                print(f"time is {start - end}")
+                print(f"time is {end - start}")
                 print(self.board)
                 return True
                 break
 
-    
-            # if redcar.col == redcarposition_inital + 1:
-            #     print(self.board)
-            #     print("één naar rechts")
-            #     queue.clear()
-            #     carlist.clear()
-            #     # exit()
-            #     BreadthF.BreadthFirst(self, self.board, self.cars)
-            #     return True
-
-
-            if self.board.positions in carlist:
-                # print("Board already been solved")
-                continue
-            
-            # if len(carlist) > 1000:
-            #     del carlist[0]
-            BoardCopy = copy.deepcopy(self.board.positions)
-            # print(BoardCopy)
-            carlist.append(BoardCopy)
-            # print(f"length of carlist = {len(carlist)}")
-
-            
+            # check all possible moves for each car
             for car in self.cars:
                 car.moveability(self.board)
 
+                # make sure the last moved car cannnot be moved again
+                if s[-1][0] == car.name[0]:
+                    continue
+
+                # if moveable to the left or downwards
                 if car.moveability_list[0] is not 0:
-                    scopy = copy.deepcopy(s)
-                    # if scopy[-1][0] == car.name[0]:
-                    #     if scopy[-1][1] is not "-":
-                    #         continue
-                    scopy.append(car.name[0] + "-1")
-                    queue.append(scopy)
-            
+                    # add all possible moves
+                    for i in range(1, car.moveability_list[0] + 1):
+                        #copy the current movelist                         
+                        scopy = copy.deepcopy(s)
+                        
+                        # append the new move  
+                        scopy.append(car.name[0] + "-" + str(i))
+
+                        # copy and update the dictionary with the netto car positions
+                        dictcopy2 = copy.deepcopy(dictcopy)
+                        dictcopy2[car.name[0]] += -i
+
+                        # make a string of the dictionary
+                        x = str(dictcopy2)
+
+                        # check if the current set of moves leads to a board that has not been visited
+                        if x not in moves_set:
+                            # if unique, add to the queue and the set with all the visited boards
+                            queue.append(scopy)
+                            moves_set.add(x)
+
+                # if moveable to the right or upwards
                 if car.moveability_list[1] is not 0:
-                    scopy = copy.deepcopy(s)
-                    # if scopy[-1][0] == car.name[0]:
-                    #     if scopy[-1][1] is not "+":
-                    #         continue
-                    scopy.append(car.name[0] + "+1")
-                    queue.append(scopy)
+                    # add all possible moves
+                    for i in range(1, car.moveability_list[1] + 1):
+                        #copy the current movelist 
+                        scopy = copy.deepcopy(s)
+                        
+                        # append the new move  
+                        scopy.append(car.name[0] + "+" + str(i))
+                        # copy and update the dictionary with the netto car positions
+                        dictcopy2 = copy.deepcopy(dictcopy)
+                        dictcopy2[car.name[0]] += i
+
+                        # make a string of the dictionary
+                        x = str(dictcopy2)
+
+                        # check if the current set of moves leads to a board that has not been visited
+                        if x not in moves_set:
+                            # if unique, add to the queue and the set with all the visited boards
+                            queue.append(scopy)
+                            moves_set.add(x)
             
-            # print(self.board)
-      
+            # print the ammount of visited boards.
+            print(len(moves_set))
+
+            
