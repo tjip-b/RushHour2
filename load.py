@@ -3,8 +3,8 @@ from car import Car
 
 class Load():
 
-    def __init__ (self, filename):
-        pass
+    # def __init__ (self, filename):
+    #     pass
         
     def load_board(self, filename):
         """

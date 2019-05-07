@@ -57,8 +57,6 @@ class RushHour():
             average = self.Average(self.allmoves) 
             print(f"avarage of {self.game} board for {n} runs = {average}")
 
-    # def Breadthfirst(self)
-
 
 
     def Average(self, lst): 
@@ -69,16 +67,14 @@ class RushHour():
         self.cars = Load.load_cars(self)
 
 if __name__ == "__main__":
+
+    # select the board 
     rushhour = RushHour("easy3")
-    # print(rushhour.board)
-    # print(rushhour.board.empty)
+   
+    # execute the breadthfirst method
     BreadthF.BreadthFirst(rushhour, rushhour.board, rushhour.cars)
-    # print(rushhour.board)
-    # for car in rushhour.cars:
-    #     print(car.name)
-    #     print(car.col, car.row)
-    # Car.move3(rushhour.cars[0], -1)
-    # print(rushhour.cars[0].col, rushhour.cars[0].row)
+    
+    # execute the bruteforce method
     # rushhour.playtest("bruteforce")
-    # print(rushhour.board.positions)
+   
      

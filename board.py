@@ -1,5 +1,5 @@
 from car import Car
-
+import copy
 class Board():
     """
     The board where the game takes place.
@@ -30,6 +30,8 @@ class Board():
         """
         return pos not in self.cars
 
+    
+
     def __str__(self):
         """ Print out board in readable strings
         """
@@ -44,4 +46,32 @@ class Board():
             returnstring += "\n"
         return returnstring
 
-    
+    # builds a board, based on the size of the board and the cars whcih are given as input
+    def build(self, size, cars):
+        board_positions = []
+        row = []
+
+        # construct an empty board
+        for i in range (0, size):
+            row.append("x")
+        for i in range (0, size):
+            board_positions.append(copy.copy(row))
+        
+        # place the cars on the board
+        for car in cars:
+            # check the orientation of the car
+            if car.direction == "horizontal":
+                # change the x's to the car letter.
+                for i in range(0, car.size):
+                    board_positions[car.row][car.col + i] = car.name[0]
+                    
+            # same for vertical cars
+            else:
+                for i in range (int(car.size)):
+                    board_positions[car.row + i][car.col] = car.name[0]
+
+        # make a new board object
+        board = Board(size-1, board_positions, (size)/2-1, 0)  
+        
+        # return the board object
+        return(board)

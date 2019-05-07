@@ -9,7 +9,7 @@ class Car():
         self.row = row
         self.col = col
 
-        # horizontal or vertical
+        # horizontal(0) or vertical(1)
         self.direction = direction
 
         # cars are always 2 or 3 tiles big
@@ -93,6 +93,7 @@ class Car():
                 else: 
                     return "none"
 
+    # changes only the position of the car object, not the board itself
     def move3(self, move):
         if self.direction == "horizontal":
             self.col += move
@@ -100,15 +101,13 @@ class Car():
             self.row += move
         
 
-
+    # the same as move, but without the failsaves
     def move2(self, board, move_dir):
         """ Tries to move car on the board.
             Returns board with moved car and changes X and Y coordinates of car object
             Nothing changes if car was not moveable in the first place.
         """
-        if move_dir == "right":
-            # failsafe: do not move through other cars on board
-           
+        if move_dir == "right":           
             board.positions[self.row][self.col + self.size] = self.name[0]
             board.positions[self.row][self.col] = "x"
             
