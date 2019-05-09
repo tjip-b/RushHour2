@@ -3,10 +3,9 @@ from car import Car
 from load import Load
 from bruteforce import Bruteforce
 from breadthF import BreadthF
+from depthF import DepthF
 from random import randint
 import time
-from colorama import init
-init()
 import sys
 import copy
 
@@ -25,16 +24,6 @@ class RushHour():
         self.initialboard = copy.deepcopy(self.board)
         self.initialcars = copy.deepcopy(self.cars)
         self.game = game
-                
-    def find(self):
-        # while redcar_position niet op self.board.exit_position:
-        print("hio")
-        
-    def check(self):
-        """
-        checks if car(s) are in certain row or colomn
-        """
-        print("test")
            
     def playtest(self, method):
         # print out some information about the board and cars
@@ -61,18 +50,21 @@ class RushHour():
 
     def Average(self, lst): 
         return sum(lst) / len(lst) 
-    
-    def Reset(self):
-        self.board = Load.load_board(self, f"data/{self.game}.txt")
-        self.cars = Load.load_cars(self)
 
 if __name__ == "__main__":
 
     # select the board 
-    rushhour = RushHour("easy3")
-   
+    rushhour = RushHour("supereasy")
+    
+    # bf = BreadthF(rushhour)
+    # bf.BreadthFirst()
+
+    rushhour2 = RushHour("supereasy")
+
+    df = DepthF(rushhour2)
+    df.depth_first()
+
     # execute the breadthfirst method
-    BreadthF.BreadthFirst(rushhour, rushhour.board, rushhour.cars)
     
     # execute the bruteforce method
     # rushhour.playtest("bruteforce")

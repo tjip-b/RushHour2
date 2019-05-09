@@ -5,25 +5,56 @@ import copy
 import time
 
 class BreadthF():
-    def __init__ (self, queue):
-        self.queue = [] 
+    def __init__ (self, rushhour):
+        self.rushhour = rushhour
+
+    def build(self, size, cars):
+        """"
+        builds a board, based on the size of the board and the cars whcih are given as input
+        """
+        board_positions = []
+        row = []
+
+        # construct an empty board
+        for i in range (0, size):
+            row.append("x")
+        for i in range (0, size):
+            board_positions.append(copy.copy(row))
+        
+        # place the cars on the board
+        for car in cars:
+            # check the orientation of the car
+            if car.direction == "horizontal":
+                # change the x's to the car letter.
+                for i in range(0, car.size):
+                    board_positions[car.row][car.col + i] = car.name[0]
+                    
+            # same for vertical cars
+            else:
+                for i in range (int(car.size)):
+                    board_positions[car.row + i][car.col] = car.name[0]
+
+        # make a new board object
+        board = Board(size-1, board_positions, (size)/2-1, 0)  
+        
+        # return the board object
+        return(board)    
+
 
     # implementation of a breadthfirst search method
-    def BreadthFirst(self, initialboard, initialcars):        
+    def BreadthFirst(self):        
 
         # set needed variables
         start = time.time()
-        self.initialboard = copy.deepcopy(initialboard)
-        self.initialcars = copy.deepcopy(initialcars)
         queue = []
         carlist = []
         n = 0
 
         # find first moveable options and place them in the queue
-        for car in self.cars:
+        for car in self.rushhour.cars:
 
             # check which cars are moveable
-            car.moveability(self.board)
+            car.moveability(self.rushhour.board)
 
             # if car is moveable to the left or upwards
             if car.moveability_list[0] is not 0:
@@ -44,22 +75,22 @@ class BreadthF():
 
         # make a dictionary with all the cars, which is used later.
         cars_dictionary = {}
-        for car in self.cars:
+        for car in self.rushhour.cars:
             cars_dictionary[car.name[0]] = 0
         
         # append dictionary to set and list. it is added as a string to the set so it can be hashed. 
         moves_set.add(str(cars_dictionary))
 
         # find the initial position of the red car and make an object redcar 
-        for car in self.cars:
+        for car in self.rushhour.cars:
             if car.name[0] == "r":
                 redcarposition_inital = copy.deepcopy(car.col)
 
         # go on till solution is found or queue is empty
         while queue:
             # set everything to the initiak state
-            self.board = copy.deepcopy(self.initialboard)
-            self.cars = copy.deepcopy(self.initialcars)
+            self.rushhour.board = copy.deepcopy(self.rushhour.initialboard)
+            self.rushhour.cars = copy.deepcopy(self.rushhour.initialcars)
 
             # make a copy of the "standard" car dictionary
             dictcopy = copy.deepcopy(cars_dictionary)
@@ -80,7 +111,7 @@ class BreadthF():
                 carletter = i[0]
 
                 # set CAR to the car that is in the move command
-                for car in self.cars:
+                for car in self.rushhour.cars:
                     if car.name[0] == (carletter):
                         CAR = car
                         break
@@ -98,26 +129,26 @@ class BreadthF():
                 CAR.move3(move) 
         
             # build the board after all the moves are executed
-            self.board = Board.build(1, self.board.width_height + 1, self.cars)
+            self.rushhour.board = self.build(self.rushhour.board.width_height + 1, self.rushhour.cars)
 
             # create an object for the red car, named redcar
-            for car in self.cars:
+            for car in self.rushhour.cars:
                 if car.name[0] == "r":
                     redcar = car
             
             # check if a solution is found
-            if redcar.col == self.board.width_height-1:
+            if redcar.col == self.rushhour.board.width_height-1:
                 print(s)
                 print("Gewonnen!")
                 end = time.time()
                 print(f"time is {end - start}")
-                print(self.board)
+                print(self.rushhour.board)
                 return True
                 break
 
             # check all possible moves for each car
-            for car in self.cars:
-                car.moveability(self.board)
+            for car in self.rushhour.cars:
+                car.moveability(self.rushhour.board)
 
                 # make sure the last moved car cannnot be moved again
                 if s[-1][0] == car.name[0]:
