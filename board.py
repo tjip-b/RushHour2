@@ -60,7 +60,7 @@ class Board():
         # place the cars on the board
         for car in cars:
             # check the orientation of the car
-            if car.direction == "horizontal":
+            if car.direction == 0:
                 # change the x's to the car letter.
                 for i in range(0, car.size):
                     board_positions[car.row][car.col + i] = car.name[0]

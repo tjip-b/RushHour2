@@ -1,10 +1,10 @@
 
 class Car():
 
-    def __init__ (self, name, row, col, direction, size, red_car):
+    def __init__ (self, name, row, col, direction, size, red_car, number):
         # capital letters
         self.name = name
-
+        self.number = number
         # x / y starting position
         self.row = row
         self.col = col
@@ -34,7 +34,7 @@ class Car():
                 Returns string of: (leftright, updown, right, left, down, up or none) based on movability
             """
             # horizontal
-            if self.direction == "horizontal":
+            if self.direction == 0:
                 # the position to which the car wants to move is either 1 more or 1 less column wise
                 #right = self.get_cols()[1] + self.size - 1
                 #left = self.get_cols()[0] - 1
@@ -95,9 +95,9 @@ class Car():
 
     # changes only the position of the car object, not the board itself
     def move3(self, move):
-        if self.direction == "horizontal":
+        if self.direction == 0:
             self.col += move
-        if self.direction == "vertical":
+        if self.direction == 1:
             self.row += move
         
 
@@ -202,7 +202,7 @@ class Car():
             Returns string of: (leftright, updown, right, left, down, up or none) based on movability
         """
         # horizontal
-        if self.direction == "horizontal":
+        if self.direction == 0:
 
             # the position to which the car wants to move is either 1 more or 1 less column wise
             right = self.col + self.size

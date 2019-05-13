@@ -69,10 +69,11 @@ class RushHour():
 if __name__ == "__main__":
 
     # select the board 
-    rushhour = RushHour("easy3")
+    rushhour = RushHour("medium3")
    
     # execute the breadthfirst method
-    BreadthF.BreadthFirst(rushhour, rushhour.board, rushhour.cars)
+    bf = BreadthF(rushhour)
+    bf.BreadthFirst(rushhour.board, rushhour.cars)
     
     # execute the bruteforce method
     # rushhour.playtest("bruteforce")

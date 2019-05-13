@@ -60,7 +60,7 @@ class Load():
         cars = []
         # list of allowed car chars
         allowed = ['!', '@', '#', '$', '%', '^', '&', '*', '/', '.', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        
+        number = 1
         # 
         for i, row in enumerate(positions):
             for j, char in enumerate(row):
@@ -74,21 +74,24 @@ class Load():
                             try:
                                 if positions[i][j + 2] == char:
                                     # x = i -- y = j
-                                    car = Car(char * 3, i, j, "horizontal", 3, False)
+                                    car = Car(char * 3, i, j, 0, 3, False, number)
                                     
                                     car.moveability(self.board)
                             
                                     cars.append(car)
+                                    number += 1
                                     continue
                                 # add 'x' at end of list just to be sure index error wont occur 
-                                car = Car(char * 2, i, j, "horizontal", 2, False)
+                                car = Car(char * 2, i, j, 0, 2, False, number)
                                 car.moveability(self.board)
                                 cars.append(car)
+                                number += 1
                             # car found, but not a 3 tile car
                             except IndexError:
-                                car = Car(char * 2, i, j, "horizontal", 2, False)
+                                car = Car(char * 2, i, j, 0, 2, False, number)
                                 car.moveability(self.board)
                                 cars.append(car)
+                                number += 1
                                 continue
                     # no car found
                     except IndexError:
@@ -100,24 +103,28 @@ class Load():
                             taken_cars.append(char)
                             try:
                                 if positions[i + 2][j] == char:
-                                    car = Car(char * 3, i, j, "vertical", 3, False)
+                                    car = Car(char * 3, i, j, 1, 3, False, number)
                                     car.moveability(self.board)
                                     cars.append(car)
+                                    number += 1
                                     continue
-                                car = Car(char * 2, i, j, "vertical", 2, False)
+                                car = Car(char * 2, i, j, 1, 2, False, number)
                                 car.moveability(self.board)
                                 cars.append(car)
+                                number += 1
                             except IndexError:
-                                car = Car(char * 2, i, j, "vertical", 2, False)
+                                car = Car(char * 2, i, j, 1, 2, False, number)
                                 car.moveability(self.board)
                                 cars.append(car)
+                                number += 1
                                 continue
                     except IndexError:
                         continue
                 elif char == "r" and char not in taken_cars:
-                    redcar = Car("redCar", i, j, "horizontal", 2, True)
+                    redcar = Car("redCar", i, j, 0, 2, True, number)
                     redcar.moveability(self.board)
                     taken_cars.append(char)
-                    cars.append(redcar)        
+                    cars.append(redcar)
+                    number += 1        
         self.board.cars = cars
         return cars
