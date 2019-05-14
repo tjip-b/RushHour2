@@ -54,15 +54,24 @@ class RushHour():
 if __name__ == "__main__":
 
     # select the board 
-    rushhour = RushHour("supereasy")
+    rushhour = RushHour("tester")
+    print(rushhour.board)
     
+    boardy = rushhour.board.make_children()
+    for board in boardy:
+        print(board)
+    print("hia")
+    print(boardy[3])
+    for board in boardy[3].make_children():
+        print(board)
+
     # bf = BreadthF(rushhour)
     # bf.BreadthFirst()
 
-    rushhour2 = RushHour("supereasy")
+    # rushhour2 = RushHour("easy2")
 
-    df = DepthF(rushhour2)
-    df.depth_first()
+    # df = DepthF(rushhour2, 1)
+    # df.depth_first_try()
 
     # execute the breadthfirst method
     

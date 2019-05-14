@@ -67,7 +67,7 @@ class Car():
             # vertical
             else:
                 up = self.row - 1
-                #print(up)
+                # print(up)
                 down = self.row + self.size
                 # check if up or down is out of the boards margins 
                 if up < 0:
@@ -92,6 +92,50 @@ class Car():
                     return "down"
                 else: 
                     return "none"
+    
+    def move4(self, board, moves):
+        """ 
+        """
+        if self.direction == "horizontal":
+            # move right
+            if moves > 0:
+                board.positions[self.row][self.col + self.size] = self.name[0]
+                board.positions[self.row][self.col] = "x"
+                self.col += moves
+
+                return board
+
+            # move left
+            if moves < 0:
+                board.positions[self.row][self.col - 1] = self.name[0]
+                board.positions[self.row][self.col + self.size - 1] = "x"
+
+                print(self.col)
+                
+                self.col -= 1
+                print(self.col)
+
+                # modify car within board object
+                # print(f"moves board:")
+                # print(board)
+                return board
+
+        else:
+            # move down
+            if moves > 0:
+                board.positions[self.row][self.col] = "x"            
+                board.positions[self.row + self.size][self.col] = self.name[0]               
+                self.row += 1
+
+                return board
+
+            # move up
+            if moves < 0:
+                board.positions[self.row - 1][self.col] = self.name[0]
+                board.positions[self.row + (self.size - 1)][self.col] = "x"
+                self.row -= 1
+
+                return board
 
     # changes only the position of the car object, not the board itself
     def move3(self, move):

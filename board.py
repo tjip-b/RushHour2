@@ -20,34 +20,98 @@ class Board():
 
         self.empty = empty
         
+    def make_children2(self):
+        returnlist = []
+        for car in self.cars:
+            car.moveability(self)
+            # horiontal
+            if car.direction.startswith("h"):
+                if car.moveability_list[0] is not 0:
+                    for i in range(0, car.moveability_list[0]):
+                        print(i)
+                        car.move3(i + 1)
+                        boardy = self.build(self.width_height + 1, self.cars)
+                        print(boardy)
+                        returnlist.append(boardy)
+                if car.moveability_list[1] is not 0:
+                    for i in range(0, car.moveability_list[0]):
+                        print(i)
+                        car.move3(i + 1)
+                        boardy = self.build(self.width_height, self.cars)
+                        print(boardy)
+                        returnlist.append(boardy)
+                
+            # vertical
+            else: 
+                if car.moveability_list[0] is not 0:
+                    pass
+                if car.moveability_list[1] is not 0:
+                    pass
 
-    def bounds(self, pos):
-        """ Checks if in bounds
+    def make_children(self):
+        """ Makes all possible child moves.
+            Returns list of child boards
         """
+        returnlist = []
+        for j, car in enumerate(self.cars):
+            car.moveability(self)
+            boardcopy = copy.deepcopy(self)
+            if car.direction == "horizontal":
+                if car.moveability_list[0] is not 0:
+                    # left
+                    for i in range(0, car.moveability_list[0]):
+                        print(car.name)
+                        current = -abs(i)
+                        boardcopy = car.move4(boardcopy, current - 1)
+                        returnlist.append(copy.deepcopy(boardcopy))
+                        
 
-    def passable(self, pos):
-        """ Checks if passable
-        """
-        return pos not in self.cars
+                if car.moveability_list[1] is not 0:
+                    # right
+                    for i in range(0, car.moveability_list[0]):
+                        car.move4(boardcopy, i + 1)
+                        returnlist.append(copy.deepcopy(boardcopy))
+            else:
+                # check for double moveables
+                if car.moveability_list[0] is not 0 and car.moveability_list[1] is not 0:
+                    print("hello")
+                    doublecopy = copy.deepcopy(boardcopy)
+                    # up
+                    print(car.moveability_list[0])
+                    for i in range(0, car.moveability_list[0]):
+                        current = -abs(i)
+                        car.move4(doublecopy, current - 1)
+                        returnlist.append(copy.deepcopy(doublecopy))
+                    triplecopy = copy.deepcopy(boardcopy)
+                    print("damn")
+                    print(triplecopy)
+                    # down
+                    for i in range(0, car.moveability_list[1]):
+                        car.move4(boardcopy, i + 1)
+                        returnlist.append(copy.deepcopy(boardcopy))
+                        print("triplecopy")
+                        print(boardcopy)
+                    continue
 
-    
+                if car.moveability_list[0] is not 0:
+                    # up
+                    for i in range(0, car.moveability_list[0]):
+                        current = -abs(i)
+                        car.move4(boardcopy, current - 1)
+                        returnlist.append(copy.deepcopy(boardcopy))
+                if car.moveability_list[1] is not 0:
+                    # down
+                    for i in range(0, car.moveability_list[1]):
+                        car.move4(boardcopy, i + 1)
+                        returnlist.append(copy.deepcopy(boardcopy))
+                        
+        return returnlist
 
-    def __str__(self):
-        """ Print out board in readable strings
-        """
-        allowed = ['!', '@', '#', '$', '%', '^', '&', '*', '/', '.', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-        returnstring = ""
-        for row in self.positions:
-            for char in row:
-                if char.isupper() or char == 'r' or char in allowed:
-                    returnstring += "| " + char + " "
-                else:
-                    returnstring += "| " + "_" + " "
-            returnstring += "\n"
-        return returnstring
-
-    # builds a board, based on the size of the board and the cars whcih are given as input
     def build(self, size, cars):
+        """ 
+        builds a board, based on the size of the board and the cars whcih are given as input
+        """
+
         board_positions = []
         row = []
 
@@ -74,4 +138,20 @@ class Board():
         board = Board(size-1, board_positions, (size)/2-1, 0)  
         
         # return the board object
-        return(board)
+        return(board)   
+
+    def __str__(self):
+        """ Print out board in readable strings
+        """
+        allowed = ['!', '@', '#', '$', '%', '^', '&', '*', '/', '.', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        returnstring = ""
+        for row in self.positions:
+            for char in row:
+                if char.isupper() or char == 'r' or char in allowed:
+                    returnstring += "| " + char + " "
+                else:
+                    returnstring += "| " + "_" + " "
+            returnstring += "\n"
+        return returnstring
+
+    

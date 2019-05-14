@@ -139,11 +139,12 @@ class BreadthF():
             # check if a solution is found
             if redcar.col == self.rushhour.board.width_height-1:
                 print(s)
+                print(len(s))
                 print("Gewonnen!")
                 end = time.time()
                 print(f"time is {end - start}")
                 print(self.rushhour.board)
-                return True
+                
                 break
 
             # check all possible moves for each car
@@ -201,5 +202,7 @@ class BreadthF():
             
             # print the ammount of visited boards.
             print(len(moves_set))
+        
+        
 
             

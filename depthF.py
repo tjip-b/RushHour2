@@ -9,6 +9,57 @@ class DepthF():
         self.rushhour = rushhour
         self.depth = depth
 
+    def depth_first_try(self):
+        stack = []                  
+        cur_depth = -1              # current search depth
+        max_depth = self.depth      # maximum depth, devines nodes at this depth as leaves
+        last_node = None            # string of dicts of last node traversed
+        carlist = []                # list of car objects 
+        n = 0                       # amount of nodes
+        archive = set()
+        childs_list = []
+
+        stack.append(self.rushhour.board) # push de beginstate op de stack
+
+        while stack:
+            current = copy.deepcopy(stack.pop())
+            archive.add(str(copy.deepcopy(current.positions)))
+            print(archive)
+
+            # make all childs of the item
+            
+
+
+            for car in current.cars:
+                # check which cars are moveable
+                car.moveability(current.board)
+
+                # if car is moveable to the left or upwards
+                if car.moveability_list[0] is not 0:
+                    
+                    # add all number of steps as moves to the stack
+                    for i in range(0, car.moveability_list[0]):
+                        car.move()
+
+                # if car is moveable to the right or downwards
+                if car.moveability_list[1] is not 0:
+
+                    # add all number of steps as moves to the stack
+                    for i in range(1, car.moveability_list[1] + 1):
+                        stack.append([car.name[0] + "+" + str(i)])
+            
+
+            # add all children to the stack
+            for child in childs_list:
+                stack.add(child)
+
+
+
+
+
+
+
+
     def build(self):
         """"
         builds a board, based on the size of the board and the cars whcih are given as input
@@ -50,11 +101,12 @@ class DepthF():
 
         # set needed variables
         start = time.time()
-        stack = []
-        cur_depth = -1
-        max_depth = 5
-        carlist = []
-        n = 0
+        stack = []                  
+        cur_depth = -1              # current search depth
+        max_depth = self.depth      # maximum depth, devines nodes at this depth as leaves
+        last_node = None            # string of dicts of last node traversed
+        carlist = []                # list of car objects 
+        n = 0                       # amount of nodes
 
         # find first moveable options and place them in the stack
         for car in self.rushhour.cars:
@@ -111,8 +163,9 @@ class DepthF():
             # check depth of current item
             cur_depth = len(s)
             if cur_depth > max_depth:
-                
                 continue
+
+            print(moves_set)
 
             # print in which iteration we are and the current movelist
             print(f"n = {n}")
@@ -149,7 +202,7 @@ class DepthF():
 
             # create an object for the red car, named redcar
             for car in self.rushhour.cars:
-                if car.name[0] == "r":
+                if car.red_car[0]:
                     redcar = car
             
             # check if a solution is found
@@ -187,14 +240,16 @@ class DepthF():
                         dictcopy2 = copy.deepcopy(dictcopy)
                         dictcopy2[car.name[0]] += -i
 
+                        stack.append(scopy)
+
                         # make a string of the dictionary
-                        x = str(dictcopy2)
+                        #x = str(dictcopy2)
 
                         # check if the current set of moves leads to a board that has not been visited
-                        if x not in moves_set:
+                        # if x not in moves_set:
                             # if unique, add to the stack and the set with all the visited boards
-                            stack.append(scopy)
-                            moves_set.add(x)
+                        #    stack.append(scopy)
+                        #    moves_set.add(x)
 
                 # if moveable to the right or upwards
                 if car.moveability_list[1] is not 0:
@@ -209,15 +264,18 @@ class DepthF():
                         dictcopy2 = copy.deepcopy(dictcopy)
                         dictcopy2[car.name[0]] += i
 
+                        stack.append(scopy)
+
                         # make a string of the dictionary
-                        x = str(dictcopy2)
+                        # x = str(dictcopy2)
 
                         # check if the current set of moves leads to a board that has not been visited
-                        if x not in moves_set:
+                        # if x not in moves_set:
                             # if unique, add to the stack and the set with all the visited boards
-                            stack.append(scopy)
-                            moves_set.add(x)
+                        #    stack.append(scopy)
+                        #    moves_set.add(x)
             print(stack)
+            
             # print the ammount of visited boards.
             print(len(moves_set))
 
