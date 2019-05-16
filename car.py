@@ -94,14 +94,17 @@ class Car():
                     return "none"
     
     def move4(self, board, moves):
+        """ changes board and car objects positions.
+            checks the cars orientation (horizontal / vertical)
+            and figures in what direction the car should move (up/down/left/right)
+            based on the moves parameter.
         """ 
-        """
         if self.direction == "horizontal":
             # move right
             if moves > 0:
                 board.positions[self.row][self.col + self.size] = self.name[0]
                 board.positions[self.row][self.col] = "x"
-                self.col += moves
+                self.col += 1
 
                 return board
 
@@ -110,14 +113,8 @@ class Car():
                 board.positions[self.row][self.col - 1] = self.name[0]
                 board.positions[self.row][self.col + self.size - 1] = "x"
 
-                print(self.col)
-                
                 self.col -= 1
-                print(self.col)
 
-                # modify car within board object
-                # print(f"moves board:")
-                # print(board)
                 return board
 
         else:
@@ -125,6 +122,7 @@ class Car():
             if moves > 0:
                 board.positions[self.row][self.col] = "x"            
                 board.positions[self.row + self.size][self.col] = self.name[0]               
+
                 self.row += 1
 
                 return board

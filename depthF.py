@@ -1,4 +1,3 @@
-from load import Load
 from board import Board 
 from car import Car 
 import copy
