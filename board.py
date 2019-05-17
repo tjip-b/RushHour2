@@ -60,15 +60,13 @@ class Board():
             # start over with a fresh board for every new car
             boardcopy = copy.deepcopy(self)
 
+            for carz in self.cars:
+                if carz.name == "AA":
+                    print(carz.row)
+
             # remember car starting positions for next iteration
             car_col = car.col
             car_row = car.row
-            rowrow = car_row
-            
-
-            if car.name == "AA":
-                print(f"ROWROW: {rowrow}")
-                print(f"CAR AA 1ROW: {car.row}")
             
             if car.direction == "horizontal":
                 # check for double moveables
@@ -147,10 +145,12 @@ class Board():
             # reset car positions for next board
             self.cars[j].col = car_col
 
-            print(f"CAR AA ROW: {car.row}")
-            print(car_row)
-            print(f"ROWROW2: {rowrow}")
+            car.row = car_row
+            print(f"ROW")
             self.cars[j].row = car_row
+            print(self.cars[j])
+            print(self.cars[j].row)
+
 
 
         # return list of all children               
