@@ -37,9 +37,9 @@ End with an example of getting some data out of the system or using it for a lit
 
 To run our program, specify the board and the algorithm used. Use this format:
 ```
-python RushHour.py easy2 depth
+python RushHour.py <board> <algorithm>
 ```
-boards to choose from:
+Boards to choose from:
   - easy
   - easy2
   - easy3
@@ -48,10 +48,15 @@ boards to choose from:
   - medium3
   - hard
 
-algorithms to choose from:
+Algorithms to choose from:
   - breadth (Breadth First Search)
   - depth (Depth First Search)
   - branch (Branch and Bound)
+  
+Choosing to run depth first search on the easy2 board would look like this:
+```
+python RushHour.py easy2 depth
+```
 
 
 ### Break down into end to end tests
