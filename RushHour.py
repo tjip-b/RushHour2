@@ -3,6 +3,7 @@ from car import Car
 from load import Load
 from bruteforce import Bruteforce
 from breadthF import BreadthF
+from breadthF2 import BreadthF2
 from random import randint
 import time
 from colorama import init
@@ -75,9 +76,16 @@ if __name__ == "__main__":
     # print(rushhour.board)
 
     # execute the breadthfirst method
-    bf = BreadthF(rushhour)
-    bf.BreadthFirst(rushhour.board, rushhour.cars)
-    
+    bf = BreadthF2(rushhour)
+    depth = 20000
+    while depth > 200:
+        rushhour = RushHour("hard")
+        bf = BreadthF2(rushhour)
+        depth = bf.BreadthFirst2(rushhour.board, rushhour.cars, depth)
+        
+        #     depth = x   
+        # else:
+        #     continue
     # execute the bruteforce method
     # rushhour.playtest("bruteforce")
    
