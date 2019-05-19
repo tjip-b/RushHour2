@@ -1,3 +1,4 @@
+template copied from: purplebooth :https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
 # RushHour2
 
 Algortihm that solves the board game rush hour. There are three implemented methods: Breadth First, Depth First and Branchh & Bound ... 
