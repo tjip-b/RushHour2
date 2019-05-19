@@ -1,7 +1,8 @@
 template copied from: purplebooth :https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
 # RushHour2
 
-Algortihm that solves the board game rush hour. There are three implemented methods: Breadth First, Depth First and Branchh & Bound ... 
+Algortihm that solves the board game rush hour. There are three implemented methods: Breadth First, Depth First and Branchh & Bound. These methods can be applied on seven different boards (three 6x6 easy boards, three 9x9 medium boards and one 12x12 hard board) which are included in the /data folder (the seven different boards can be viewed at http://heuristieken.nl/wiki/index.php?title=Rush_Hour).
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
@@ -34,7 +35,24 @@ End with an example of getting some data out of the system or using it for a lit
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+To run our program, specify the board and the algorithm used. Use this format:
+```
+python RushHour.py easy2 depth
+```
+boards to choose from:
+  - easy
+  - easy2
+  - easy3
+  - medium
+  - medium2
+  - medium3
+  - hard
+
+algorithms to choose from:
+  - breadth (Breadth First Search)
+  - depth (Depth First Search)
+  - branch (Branch and Bound)
+
 
 ### Break down into end to end tests
 
