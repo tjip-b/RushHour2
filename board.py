@@ -20,174 +20,17 @@ class Board():
 
         self.empty = empty
         
-    def make_children2(self):
-        returnlist = []
-        for car in self.cars:
-            car.moveability(self)
-            # horiontal
-            if car.direction.startswith("h"):
-                if car.moveability_list[0] is not 0:
-                    for i in range(0, car.moveability_list[0]):
-                        print(i)
-                        car.move3(i + 1)
-                        boardy = self.build(self.width_height + 1, self.cars)
-                        print(boardy)
-                        returnlist.append(boardy)
-                if car.moveability_list[1] is not 0:
-                    for i in range(0, car.moveability_list[0]):
-                        print(i)
-                        car.move3(i + 1)
-                        boardy = self.build(self.width_height, self.cars)
-                        print(boardy)
-                        returnlist.append(boardy)
-                
-            # vertical
-            else: 
-                if car.moveability_list[0] is not 0:
-                    pass
-                if car.moveability_list[1] is not 0:
-                    pass
 
-    def make_children(self):
-        """ Makes all possible moves from a certain 
-            positions on the board and returns a list 
-            of all those child boards
-        """
-        returnlist = []
-        for j, car in enumerate(self.cars):
-            # movement possibilities of the car is based on the moveability_list
-            car.moveability(self)
-            # start over with a fresh board for every new car
-            boardcopy = copy.deepcopy(self)
-
-            for carz in self.cars:
-                if carz.name == "AA":
-                    print(carz.row)
-
-            # remember car starting positions for next iteration
-            car_col = car.col
-            car_row = car.row
-            
-            if car.direction == "horizontal":
-                # check for double moveables
-                if car.moveability_list[0] is not 0 and car.moveability_list[1] is not 0:
-                    # make copy and remember row position
-                    doublecopy = copy.deepcopy(boardcopy)
-                    col_save = car.col
-
-                    # create all possible leftward positions
-                    for i in range(0, car.moveability_list[0]):
-                        current = -abs(i)
-                        car.move4(boardcopy, current - 1)
-                        boardcopy.cars[j].col = car.col
-                        returnlist.append(copy.deepcopy(boardcopy))
-                    
-                    # create all possible rightward positions from copy
-                    car.col = col_save
-                    for i in range(0, car.moveability_list[1]):
-                        car.move4(doublecopy, i + 1)
-                        doublecopy.cars[j].col = car.col
-                        returnlist.append(copy.deepcopy(doublecopy))
-                    continue
-
-                if car.moveability_list[0] is not 0:
-                    # create all possible leftward positions
-                    for i in range(0, car.moveability_list[0]):
-                        print(car.name)
-                        current = -abs(i)
-                        boardcopy = car.move4(boardcopy, current - 1)
-                        boardcopy.cars[j].col = car.col
-                        returnlist.append(copy.deepcopy(boardcopy))
-                        
-                if car.moveability_list[1] is not 0:
-                    # create all possible rightward positions 
-                    for i in range(0, car.moveability_list[0]):
-                        car.move4(boardcopy, i + 1)
-                        boardcopy.cars[j].col = car.col
-                        returnlist.append(copy.deepcopy(boardcopy))
-            
-            else:
-                # check for double moveables
-                if car.moveability_list[0] is not 0 and car.moveability_list[1] is not 0:
-                    # make copy and remember row position
-                    doublecopy = copy.deepcopy(boardcopy)
-                    row_save = car.row
-                    
-                    # create all possible upward positions
-                    for i in range(0, car.moveability_list[0]):
-                        current = -abs(i)
-                        car.move4(boardcopy, current - 1)
-                        boardcopy.cars[j].row = car.row
-                        returnlist.append(copy.deepcopy(boardcopy))
-                    
-                    # create all possible downward positions from copy
-                    car.row = row_save
-                    for i in range(0, car.moveability_list[1]):
-                        car.move4(doublecopy, i + 1)
-                        doublecopy.cars[j].row = car.row
-                        returnlist.append(copy.deepcopy(doublecopy))
-                    continue
-
-                if car.moveability_list[0] is not 0:
-                    # create all possible upward positions
-                    for i in range(0, car.moveability_list[0]):
-                        current = -abs(i)
-                        car.move4(boardcopy, current - 1)
-                        boardcopy.cars[j].row = car.row
-                        returnlist.append(copy.deepcopy(boardcopy))
-                if car.moveability_list[1] is not 0:
-                    # create all possible downward positions
-                    for i in range(0, car.moveability_list[1]):
-                        car.move4(boardcopy, i + 1)
-                        boardcopy.cars[j].row = car.row
-                        returnlist.append(copy.deepcopy(boardcopy))
-            
-            # reset car positions for next board
-            self.cars[j].col = car_col
-
-            car.row = car_row
-            print(f"ROW")
-            self.cars[j].row = car_row
-            print(self.cars[j])
-            print(self.cars[j].row)
-
-
-
-        # return list of all children               
-        return returnlist
-
-    def build(self, size, cars):
-        """ 
-        builds a board, based on the size of the board and the cars whcih are given as input
+    def bounds(self, pos):
+        """ Checks if in bounds
         """
 
-        board_positions = []
-        row = []
+    def passable(self, pos):
+        """ Checks if passable
+        """
+        return pos not in self.cars
 
-        # construct an empty board
-        for i in range (0, size):
-            row.append("x")
-        for i in range (0, size):
-            board_positions.append(copy.copy(row))
-        
-        # place the cars on the board
-        for car in cars:
-            # check the orientation of the car
-            if car.direction == "horizontal":
-                # change the x's to the car letter.
-                for i in range(0, car.size):
-                    board_positions[car.row][car.col + i] = car.name[0]
-                    
-            # same for vertical cars
-            else:
-                for i in range (int(car.size)):
-                    board_positions[car.row + i][car.col] = car.name[0]
-
-        # make a new board object
-        board = Board(size-1, board_positions, (size)/2-1, 0)  
-        
-        # return the board object
-        return(board)   
+    
 
     def __str__(self):
         """ Print out board in readable strings
@@ -203,4 +46,32 @@ class Board():
             returnstring += "\n"
         return returnstring
 
-    
+    # builds a board, based on the size of the board and the cars whcih are given as input
+    def build(self, size, cars):
+        board_positions = []
+        row = []
+
+        # construct an empty board
+        for i in range (0, size):
+            row.append("x")
+        for i in range (0, size):
+            board_positions.append(copy.copy(row))
+        
+        # place the cars on the board
+        for car in cars:
+            # check the orientation of the car
+            if car.direction == 0:
+                # change the x's to the car letter.
+                for i in range(0, car.size):
+                    board_positions[car.row][car.col + i] = car.name[0]
+                    
+            # same for vertical cars
+            else:
+                for i in range (int(car.size)):
+                    board_positions[car.row + i][car.col] = car.name[0]
+
+        # make a new board object
+        board = Board(size-1, board_positions, (size)/2-1, 0)  
+        
+        # return the board object
+        return(board)

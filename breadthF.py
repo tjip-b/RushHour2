@@ -1,7 +1,9 @@
+from load import Load
 from board import Board 
 from car import Car 
 import copy
 import time
+import random
 
 class BreadthF():
     def __init__ (self, rushhour):
@@ -11,6 +13,8 @@ class BreadthF():
     def BreadthFirst(self, initialboard, initialcars):        
 
         # set needed variables
+
+        
         start = time.time()
         self.initialboard = copy.deepcopy(initialboard)
         self.initialcars = copy.deepcopy(initialcars)
@@ -58,6 +62,7 @@ class BreadthF():
 
         # go on till solution is found or queue is empty
         while queue:
+            counter = 0
             # set everything to the initiak state
             self.rushhour.board = copy.deepcopy(self.initialboard)
             self.rushhour.cars = copy.deepcopy(self.initialcars)
@@ -71,7 +76,8 @@ class BreadthF():
             # print in which iteration we are and the current movelist
             print(f"n = {n}")
             n += 1
-            print(s)
+            # print(s)
+            # print(self.rushhour.board)
 
             # iterate through the move commands in s
             for i in s:
@@ -111,12 +117,22 @@ class BreadthF():
                 print("Gewonnen!")
                 end = time.time()
                 print(f"time is {end - start}")
+                print(f"n = {n}")
                 print(self.rushhour.board)
                 return True
                 break
 
             # check all possible moves for each car
-            for car in self.rushhour.cars:
+            
+            for i in range (0, len(self.rushhour.cars) - 1):
+
+            # for car in self.rushhour.cars:
+                # print (f"counter = {counter}")
+                if counter > 0:
+                    break
+                
+                car = random.choice(self.rushhour.cars)
+                # print (car)
                 car.moveability(self.rushhour.board)
 
                 # make sure the last moved car cannnot be moved again
@@ -162,6 +178,7 @@ class BreadthF():
                     # check if the current set of moves leads to a board that has not been visited
                     if x not in moves_set:
                         # if unique, add to the queue and the set with all the visited boards
+                        counter += 1
                         queue.append(scopy)
                         moves_set.add(x)
 
@@ -203,8 +220,10 @@ class BreadthF():
                     # check if the current set of moves leads to a board that has not been visited
                     if x not in moves_set:
                         # if unique, add to the queue and the set with all the visited boards
+                        counter += 1
                         queue.append(scopy)
                         moves_set.add(x)
             # print the ammount of visited boards.
             # print(len(moves_set))
             # print(self.rushhour.board)
+            
