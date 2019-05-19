@@ -3,6 +3,7 @@ from car import Car
 from bruteforce import Bruteforce
 from breadthF import BreadthF
 from depthF import DepthF
+from depthrandom import depth_random
 from random import randint
 import time
 import sys
@@ -170,39 +171,21 @@ if __name__ == "__main__":
 
     listy = []
     # select the board 
-    rushhour = RushHour("tester")
-    print(rushhour.board)
-    print("*******************************************")
-    boardy = rushhour.board.make_children()
-    listy.append(rushhour.board.make_children())
-    for board in boardy:
-        for car in board.cars:
-            if car.name == "AA":
-                print(f"{car.name}-row: {car.row}")
-                print(car.col)
-        print(board)
+    # rushhour = RushHour("supereasy")
 
-    print("BOARDY 3")
-    print(boardy[15])
-    print(boardy[15].cars[0].row)
-    for car in boardy[15].cars:
-        print(car)
-        print(car.col)
-        print(car.row)
-    for board in boardy[15].make_children():
-        print(board)
-
-    print("hia")
-    print(boardy[3])
 
 
     # bf = BreadthF(rushhour)
     # bf.BreadthFirst()
 
-    # rushhour2 = RushHour("easy2")
+    rushhour2 = RushHour("easy")
 
-    # df = DepthF(rushhour2, 1)
-    # df.depth_first_try()
+    df = DepthF(rushhour2, 450)
+    df.depth_first()
+
+    # rushhour3 = RushHour("medium3")
+    # dr = depth_random(rushhour3)
+    # dr.DepthRandom()
 
     # execute the breadthfirst method
     
