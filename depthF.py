@@ -52,10 +52,6 @@ class DepthF():
                 stack.add(child)
     """
 
-
-
-
-
     def build_board(self, move_list):
         """ excecutes all the moves in moves_list and
             builds a board according to those moves.
