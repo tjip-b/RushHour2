@@ -171,17 +171,24 @@ if __name__ == "__main__":
 
     listy = []
     # select the board 
-    # rushhour = RushHour("supereasy")
+    # rushhour = RushHour("easy2")
 
 
 
     # bf = BreadthF(rushhour)
     # bf.BreadthFirst()
 
-    rushhour2 = RushHour("easy")
-
-    df = DepthF(rushhour2, 450)
+    rushhour2 = RushHour("easy2")
+    df = DepthF(rushhour2, 16)
     df.depth_first()
+
+
+    # for i in range(70):
+    #     rushhour2 = RushHour("easy2")
+    #     rate = i + 1
+    #     df = DepthF(rushhour2, rate)
+    #     if df.depth_first() == True:
+    #         print("sol found")
 
     # rushhour3 = RushHour("medium3")
     # dr = depth_random(rushhour3)
