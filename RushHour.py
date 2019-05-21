@@ -3,7 +3,7 @@ from car import Car
 from load import Load
 from bruteforce import Bruteforce
 from breadthF import BreadthF
-from breadthF2 import BreadthF2
+from depthrandom import Depth_random
 from random import randint
 import time
 from colorama import init
@@ -69,24 +69,8 @@ class RushHour():
 
 if __name__ == "__main__":
 
-    # select the board 
+    # searches for a solution with a depth of 50
     rushhour = RushHour("hard")
-    # board = Bruteforce.randommover2(rushhour,  10000)
-    # print(board)
-    # print(rushhour.board)
-
-    # execute the breadthfirst method
-    bf = BreadthF2(rushhour)
-    depth = 20000
-    while depth > 200:
-        rushhour = RushHour("hard")
-        bf = BreadthF2(rushhour)
-        depth = bf.BreadthFirst2(rushhour.board, rushhour.cars, depth)
-        
-        #     depth = x   
-        # else:
-        #     continue
-    # execute the bruteforce method
-    # rushhour.playtest("bruteforce")
-   
-     
+    bf = copy.deepcopy(Depth_random(rushhour))
+    List = bf.find_optimised_solution(3000, 50)
+    print(List)
