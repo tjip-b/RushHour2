@@ -1,15 +1,25 @@
-import sys
+###############################################################################
+# Course:               Heuristics
+# Project:              Rush Hour
+# Group:                1Formule
+# Autors:               Tjip Bischoff,     Kevin Dekker,     Siebren Kazemier
+# Student numbers:      11013028           11076143          12516597
+# Mentor:               ing E.H. Steffens
+#
+# This program runs the game of Rush Hour.
+###############################################################################
+
+import arcade
 from board import Board
 from car import Car
-from load import Load
 from bruteforce import Bruteforce
+from breadthF import BreadthF
+from depthF import DepthF
+from depthrandom import DepthRandom
 from random import randint
 import time
-from collections import defaultdict
-# from graph import Graph
-# from colorama import init
-#
-# init()
+import sys
+import copy
 
 
 class RushHour():
@@ -18,190 +28,146 @@ class RushHour():
     """
 
     def __init__(self, game):
+        self.board = self.load_board(f"data/{game}.txt")
+        self.cars = self.load_cars()
+        self.initial_board = copy.deepcopy(self.board)
+        self.initial_cars = copy.deepcopy(self.cars)
+
+    def load_board(self, filename):
         """
-        Create the board within the game and create car objects
+        Initialize a Board object from the filename.
         """
-        self.board = Load.load_board(self, f"data/{game}.txt")
-        self.cars = Load.load_cars(self)
-        self.allmoves = []
-        self.initialboard = self.board
-        self.initialcars = self.cars
-        self.game = game
+        load_board = []
+        red_car_position = []
+        exit_position = 0
+        empty = []
+        allowed = ['!', '@', '#', '$', '%', '^', '&', '*', '/',
+                   '.', 'x', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
-    def find(self):
-        # while redcar_position niet op self.board.exit_position:
-        print("hio")
+        with open(filename, "r") as f:
+            # load in lines
+            for i, line in enumerate(f):
+                row = []
 
-    def check(self):
+                if not line == "\n":
+                    line.strip('\n')
+                    for j, char in enumerate(line):
+
+                        # add chars to car position
+                        if char.isupper() or char in allowed:
+                            row.append(char)
+
+                        # red car position (example: [2.4, 2.5]) ~~ can be deleted
+                        elif char == "r":
+                            red_car_position.append(str(i) + "." + str(j))
+                            row.append(char)
+
+                        # finish y position
+                        elif char == "e":
+                            exit_position = j - 1
+
+                        if char == "x":
+                            empty.append([j, i])
+
+                load_board.append(row)
+
+            # initialize board
+            board = Board(i, load_board, exit_position, empty)
+            return board
+
+    def load_cars(self):
         """
-        checks if car(s) are in certain row or colomn
+        Searches all cars on the grid, creates car objects, append to list.
         """
-        print("test")
+        positions = self.board.positions
 
-    def playtest(self, method):
-        # print out some information about the board and cars
-        print(self.board.positions)
-        for line in self.board.positions:
-            print(line)
-        for i, car in enumerate(self.cars):
-            print("No.%s: CAR: %s" % (i, car))
-            print(car.direction)
-            print(f"X pos: {car.row} y pos: {car.col}")
-            print('\n')
-        print(self.board.width_height)
-        print(self.board)
+        # letters of cars which are already taken
+        taken_cars = []
 
-        # brute force the game!
-        if method == "bruteforce":
+        # list of car objects
+        cars = []
 
-            n = 1
-            Bruteforce.randommover(self,  1)
-            average = self.Average(self.allmoves)
-            print(f"avarage of {self.game} board for {n} runs = {average}")
+        # list of allowed car chars
+        allowed = ['!', '@', '#', '$', '%', '^', '&', '*', '/',
+                   '.', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
-    def Average(self, lst):
-        return sum(lst) / len(lst)
+        for i, row in enumerate(positions):
+            for j, char in enumerate(row):
 
-    def Reset(self):
-        self.board = Load.load_board(self, f"data/{self.game}.txt")
-        self.cars = Load.load_cars(self)
+                # check for red car (which is always horizontal and of size 2)
+                if (char.isupper() or char in allowed) and char not in taken_cars:
+
+                    # trying to find a horizontal car
+                    try:
+                        if positions[i][j + 1] == char:
+                            taken_cars.append(char)
+
+                            # check for third 'block'
+                            try:
+                                if positions[i][j + 2] == char:
+                                    # x = i -- y = j
+                                    car = Car(char * 3, i, j, "horizontal", 3, False)
+                                    car.moveability(self.board)
+                                    cars.append(car)
+                                    continue
+
+                                # add 'x' at end of list just to be sure
+                                # index error wont occur
+                                car = Car(char * 2, i, j, "horizontal", 2, False)
+                                car.moveability(self.board)
+                                cars.append(car)
+
+                            # car found, but not a 3 tile car
+                            except IndexError:
+                                car = Car(char * 2, i, j, "horizontal", 2, False)
+                                car.moveability(self.board)
+                                cars.append(car)
+                                continue
+
+                    # no car found
+                    except IndexError:
+                        pass
+
+                    # trying to find a vertical car
+                    try:
+                        if positions[i + 1][j] == char:
+                            taken_cars.append(char)
+                            try:
+                                if positions[i + 2][j] == char:
+                                    car = Car(char * 3, i, j, "vertical", 3, False)
+                                    car.moveability(self.board)
+                                    cars.append(car)
+                                    continue
+                                car = Car(char * 2, i, j, "vertical", 2, False)
+                                car.moveability(self.board)
+                                cars.append(car)
+                            except IndexError:
+                                car = Car(char * 2, i, j, "vertical", 2, False)
+                                car.moveability(self.board)
+                                cars.append(car)
+                                continue
+                    except IndexError:
+                        continue
+
+                elif char == "r" and char not in taken_cars:
+                    redcar = Car("redCar", i, j, "horizontal", 2, True)
+                    redcar.moveability(self.board)
+                    taken_cars.append(char)
+                    cars.append(redcar)
+
+        self.board.cars = cars
+        return cars
 
 
 if __name__ == "__main__":
-    rushhour = RushHour("easy2")
-    # rushhour.playtest("bruteforce")
 
-    # print(f"width_height: {rushhour.board.width_height}")
+    # select the board
+    rush_hour2 = RushHour("easy")
 
-    class Graph:
+    # execute the depthfirst method
+    # bf = BreadthF(rush_hour2)
+    # bf.breadth_first()
 
-        # Constructor
-        def __init__(self):
-
-            # default dictionary to store graph
-            self.graph = defaultdict(list)
-
-        # function to add an edge to graph
-        def addEdge(self, u, v):
-            self.graph[u].append(v)
-
-        # Function to print a BFS of graph
-        def BFS(self, s):
-
-            # Mark all the vertices as not visited
-            visited = [False] * (len(self.graph))
-
-            # Create a queue for BFS
-            queue = []
-
-            # Mark the source node as
-            # visited and enqueue it
-            queue.append(s)
-
-            for count, visit in enumerate(self.graph):
-                if visit == s:
-                    visited[count] = True
-
-            while queue:
-                # Dequeue a vertex from
-                # queue and print it
-                s = queue.pop(0)
-                # print(s, end=" ")
-
-                ##################### TRY TO MOVE THE CAR ####################
-
-                # board_save_list.append(rushhour.board.positions)
-                # print(board_save_list)
-
-                for car in rushhour.cars:
-                    # update moveability
-                    car.moveability(rushhour.board)
-
-                    if car.red_car and car.moveability_list[1] > 0:
-                        car.move(rushhour.board, "right")
-                        queue.clear()
-                    elif not car.red_car and s == car.name[0] and car.direction == "horizontal":
-                        if car.moveability_list[0] > 0:
-                            car.move(rushhour.board, "left")
-                            queue.clear()
-                        elif car.moveability_list[1] > 0:
-                            car.move(rushhour.board, "right")
-                            queue.clear()
-                    elif not car.red_car and s == car.name[0] and car.direction == "vertical":
-                        if car.moveability_list[0] > 0:
-                            car.move(rushhour.board, "up")
-                            queue.clear()
-                        elif car.moveability_list[1] > 0:
-                            car.move(rushhour.board, "down")
-                            queue.clear()
-                    else:
-                        # Get all adjacent vertices of the
-                        # dequeued vertex s. If a adjacent
-                        # has not been visited, then mark it
-                        # visited and enqueue it
-                        for i in self.graph[s]:
-                            for count, visit in enumerate(self.graph):
-                                if visit == i and visited[count] == False:
-                                    queue.append(i)
-                                    visited[count] = True
-
-            print(rushhour.board)
-            #
-            # for board in board_save_list:
-            #     for line in board_save_list:
-            #         for bla in line:
-            #             print(bla)
-
-    ##########################################################################
-    # CAR CONNECTIONS #
-    ##########################################################################
-
-    # for car in rushhour.cars:
-    #     if car.red_car:
-    #         while car.col + 1 != rushhour.board.exit_position:
-    haai = 0
-
-    # remember boards
-    save_boards = []
-
-    while haai < 50:
-
-        save_boards.append(rushhour.board.positions)
-
-        g = Graph()
-
-        for car in rushhour.cars:
-            if car.direction == "horizontal":
-                connection_left = car.col - car.moveability_list[0] - 1
-                connection_right = car.col + car.size + car.moveability_list[1]
-
-                # connection_left = car.col - 1
-                # connection_right = car.col + car.size
-
-                # add connections
-                if connection_left >= 0:
-                    g.addEdge(rushhour.board.positions[car.row][car.col],
-                              rushhour.board.positions[car.row][connection_left])
-                if connection_right <= rushhour.board.width_height:
-                    g.addEdge(rushhour.board.positions[car.row][car.col],
-                              rushhour.board.positions[car.row][connection_right])
-            # vertical
-            else:
-                connection_up = car.row - car.moveability_list[0] - 1
-                connection_down = car.row + car.size + car.moveability_list[1]
-
-                # connection_up = car.row - 1
-                # connection_down = car.row + car.size
-
-                # add connection
-                if connection_up >= 0:
-                    g.addEdge(rushhour.board.positions[car.row][car.col],
-                              rushhour.board.positions[connection_up][car.col])
-                if connection_down <= rushhour.board.width_height:
-                    g.addEdge(rushhour.board.positions[car.row][car.col],
-                              rushhour.board.positions[connection_down][car.col])
-        g.BFS('r')
-        haai = haai + 1
-
-        print(g.graph)
-    # g.BFS('r')
+    # execute the depthfirst method
+    # df = DepthF(rush_hour2, 450)
+    # df.depth_first()
