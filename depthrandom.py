@@ -1,254 +1,262 @@
 from board import Board 
 from car import Car 
+import helpers
 import copy
 import time
 import random
 
-class depth_random():
+class Depth_random():
     def __init__ (self, rushhour):
         self.queue = [] 
         self.rushhour = rushhour
-        self.initialboard = copy.deepcopy(self.rushhour.initialboard)
-        self.initialcars = copy.deepcopy(self.rushhour.initialcars)
-
     # implementation of a breadthfirst search method
-    def DepthRandom(self):        
 
-        # set needed variables
+    def check_if_won(self):
+        """
+        checks if the board is solved
+        """
+        # create an object for the red car, named redcar
+        for car in self.rushhour.cars:
+            if car.name[0] == "r":
+                redcar = car
 
+        # check if a solution is found
+        if redcar.col == self.rushhour.board.width_height-1:
+            return True
+        else:
+            return False
+
+    def moveable_list(self):
+        """
+        makes a list with moveable cars
+        """
+        moveable_cars = []
         
+        for car in self.rushhour.cars:
+            car.moveability(self.rushhour.board)
+            
+            # append car if moveable
+            if car.moveability_list[0] is not 0 or car.moveability_list[1] is not 0:
+                moveable_cars.append(car)
+        # print(moveable_cars) 
+        return moveable_cars
+
+    def moves_list(self):
+        """
+        makes a list with moveable cars
+        """
+        moveable_cars = []
+  
+        for car in self.rushhour.cars:
+            car.moveability(self.rushhour.board)
+            
+            # append car if moveable
+            if car.moveability_list[0] is not 0: 
+                move = car.name[0] + "-" + str(car.moveability_list[0])
+                moveable_cars.append(move)
+            
+            if car.moveability_list[1] is not 0:
+                move = car.name[0] + "+" + str(car.moveability_list[1])
+                moveable_cars.append(move)
+    
+        return moveable_cars
+    
+    def car_distance(self):
+        """
+        calculates the distance of a car to the exit
+        """
+        size = self.rushhour.board.width_height
+        # print (f"size is {size}")
+        exit_position = self.rushhour.board.exit_position
+        for car in self.rushhour.cars:
+            # print(car.col)
+            if car.direction == 0:
+                car.distance = size - car.col
+            else:
+                car.distance = abs(car.row-exit_position)
+            
+
+    def execute_move_command(self, command):
+        """
+        executes a movement given as input (command)
+        """
+        CAR = None
+        carname = command[0]
+
+        # set CAR to the car that is in the move command
+        for car in self.rushhour.cars:
+            if car.name[0] == carname:
+                CAR = car
+                break
+        
+        # check if the movement is right or up (+) or left or down (-)
+        if command[1] == "+":
+            move = int(command[2]) 
+        else:
+            move = -int(command[2])
+        # execute the move
+        CAR.move3(move) 
+
+
+    def Depth_Random(self, depth):        
+        """
+        Random searches for a solution till a given depth. Returns the solution
+        """
+        # set needed variables        
         start = time.time()
-        queue = []
-        carlist = []
         n = 0
-        initial_moves = []
 
-
-
-        # find first moveable options and place them in the stack
-        for car in self.rushhour.cars:
-
-            # check which cars are moveable
-            car.moveability(self.rushhour.board)
-
-            # if car is moveable to the left or upwards
-            if car.moveability_list[0] is not 0:
-                
-                initial_moves.append([car.name[0] + "-" + str(car.moveability_list[0])])
-
-            # if car is moveable to the right or downwards
-            if car.moveability_list[1] is not 0:
-
-                # add all number of steps as moves to the stack
-                for i in range(1, car.moveability_list[1] + 1):
-                    initial_moves.append([car.name[0] + "+" + str(car.moveability_list[1])])
-
-
-        # find first moveable options and place them in the queue
-        for car in self.rushhour.cars:
-
-            # check which cars are moveable
-            car.moveability(self.rushhour.board)
-
-            # if car is moveable to the left or upwards
-            if car.moveability_list[0] is not 0:
-                
-                # # add all number of steps as moves to the queue
-                # for i in range(1, car.moveability_list[0] + 1):
-                #     queue.append([car.name[0] + "-" + str(i)])
-                queue.append([car.name[0] + "-" + str(car.moveability_list[0])])
-            # if car is moveable to the right or downwards
-            if car.moveability_list[1] is not 0:
-
-                # # add all number of steps as moves to the queue
-                # for i in range(1, car.moveability_list[1] + 1):
-                #     queue.append([car.name[0] + "+" + str(i)])
-
-                queue.append([car.name[0] + "+" + str(car.moveability_list[1] )])
-        # print(queue)
-        # set needed for pre pruning which contains all visited boards. 
+        # make a list with moveable cars
+        moveable_cars = self.moves_list()
+       
+        # pick a random move
+        move = random.choice(moveable_cars)
+       
+        # make a set that contains all visited boards
         moves_set = set()
 
-        # make a dictionary with all the cars, which is used later.
+        # make a dictionary that contains all cars with their netto movement
         cars_dictionary = {}
         for car in self.rushhour.cars:
             cars_dictionary[car.name[0]] = 0
         
-        # append dictionary to set and list. it is added as a string to the set so it can be hashed. 
+        # append dictionary to set. it is added as a string to the set so it can be hashed. 
         moves_set.add(str(cars_dictionary))
+        
+        # make a list that will contain all executed moves 
+        s = []    
 
-        # find the initial position of the red car and make an object redcar 
-        for car in self.rushhour.cars:
-            if car.name[0] == "r":
-                redcarposition_inital = copy.deepcopy(car.col)
+        while n < depth:
+            n += 1
 
-        print(initial_moves)
-        # go on till solution is found or queue is empty
-        for initial_move in initial_moves:
-            queue.append(initial_move)
-            while queue:
-                counter = 0
-                # set everything to the initiak state
-                self.rushhour.board = copy.deepcopy(self.initialboard)
-                self.rushhour.cars = copy.deepcopy(self.initialcars)
+            # execute move and save it in the dictionary
+            self.execute_move_command(move)
+            if move[1] == "+":
+                movement = int(move[2])
+            else:
+                movement = -int(move[2])
+            cars_dictionary[car.name[0]] += movement
 
-                # make a copy of the "standard" car dictionary
-                dictcopy = copy.deepcopy(cars_dictionary)
-                
-                # take the first item from the queue and pop it.
-                s = queue.pop(0) 
-                print(s)
-
-                # print in which iteration we are and the current movelist
-                print(f"n = {n}")
-                n += 1
-                # print(s)
-                # print(self.rushhour.board)
-
-                # iterate through the move commands in s
-                for i in s:
-
-                    # initialise CAR
-                    CAR = None
-                    carname = i[0]
-
-                    # set CAR to the car that is in the move command
-                    for car in self.rushhour.cars:
-                        if car.name[0] == carname:
-                            CAR = car
-                            break
-                    
-                    # check if the movement is right or up (+) or left or down (-)
-                    if i[1] == "+":
-                        move = int(i[2]) 
-                    else:
-                        move = -int(i[2])
-                    # change the state of the board in the dictionary  
-                    dictcopy[car.name[0]] += move
-                    
-                    # execute the move
-                    CAR.move3(move) 
+            # moves_set.add(str(cars_dictionary))
+            s.append(move)
             
-                # build the board after all the moves are executed
-                self.rushhour.board = Board.build(1, self.rushhour.board.width_height + 1, self.rushhour.cars)
+            # build the board
+            self.rushhour.board = helpers.build(self.rushhour.board.width_height + 1, self.rushhour.cars)
+            
+            if self.check_if_won() == True:
+                print(s)
+                print("Gewonnen!")
+                end = time.time()
+                print(f"time is {end - start}")
+                print(f"n = {n}")
+                print(self.rushhour.board)
+                return s
 
-                # create an object for the red car, named redcar
-                for car in self.rushhour.cars:
-                    if car.name[0] == "r":
-                        redcar = car
-                
-                # check if a solution is found
-                if redcar.col == self.rushhour.board.width_height-1:
-                    print(s)
-                    print("Gewonnen!")
-                    end = time.time()
-                    print(f"time is {end - start}")
-                    print(f"n = {n}")
-                    print(self.rushhour.board)
-                    return True
-                    break
-
-                # check all possible moves for each car
-                for i in range (0, len(self.rushhour.cars) - 1):
-
-                # for car in self.rushhour.cars:
-                    # print (f"counter = {counter}")
-                    if counter > 0:
-                        break
+            # check all possible moves for each car and add them to a list
+            moveable_cars = self.moves_list()
                     
-                    car = random.choice(self.rushhour.cars)
-                    # print (car)
-                    car.moveability(self.rushhour.board)
-
-                    # make sure the last moved car cannnot be moved again
-                    if s[-1][0] == car.name[0]:
-                        continue
-
-                    # if moveable to the left or downwards
-                    if car.moveability_list[0] is not 0:
-                        # add all possible moves
-                        # for i in range(1, car.moveability_list[0] + 1):
-                        #     #copy the current movelist                         
-                        #     scopy = copy.deepcopy(s)
-                            
-                        #     # append the new move  
-                        #     scopy.append(car.name[0] + "-" + str(i))
-
-                        #     # copy and update the dictionary with the netto car positions
-                        #     dictcopy2 = copy.deepcopy(dictcopy)
-                        #     dictcopy2[car.name[0]] += -i
-
-                        #     # make a string of the dictionary
-                        #     x = str(dictcopy2)
-
-                        #     # check if the current set of moves leads to a board that has not been visited
-                        #     if x not in moves_set:
-                        #         # if unique, add to the queue and the set with all the visited boards
-                        #         queue.append(scopy)
-                        #         moves_set.add(x)
-
-
-                        scopy = copy.deepcopy(s)
-                        
-                        # append the new move  
-                        scopy.append(car.name[0] + "-" + str(car.moveability_list[0]))
-
-                        # copy and update the dictionary with the netto car positions
-                        dictcopy2 = copy.deepcopy(dictcopy)
-                        dictcopy2[car.name[0]] += -car.moveability_list[0]
-
-                        # make a string of the dictionary
-                        x = str(dictcopy2)
-
-                        # check if the current set of moves leads to a board that has not been visited
-                        if x not in moves_set:
-                            # if unique, add to the queue and the set with all the visited boards
-                            counter += 1
-                            queue.append(scopy)
-                            moves_set.add(x)
-
-                    # if moveable to the right or upwards
-                    if car.moveability_list[1] is not 0:
-                        # add all possible moves
-                        # for i in range(1, car.moveability_list[1] + 1):
-                        #     #copy the current movelist 
-                        #     scopy = copy.deepcopy(s)
-                            
-                        #     # append the new move  
-                        #     scopy.append(car.name[0] + "+" + str(i))
-                        #     # copy and update the dictionary with the netto car positions
-                        #     dictcopy2 = copy.deepcopy(dictcopy)
-                        #     dictcopy2[car.name[0]] += i
-
-                        #     # make a string of the dictionary
-                        #     x = str(dictcopy2)
-
-                        #     # check if the current set of moves leads to a board that has not been visited
-                        #     if x not in moves_set:
-                        #         # if unique, add to the queue and the set with all the visited boards
-                        #         queue.append(scopy)
-                        #         moves_set.add(x)
-
-
-                        scopy = copy.deepcopy(s)
-                        
-                        # append the new move  
-                        scopy.append(car.name[0] + "+" + str(car.moveability_list[1]))
-
-                        # copy and update the dictionary with the netto car positions
-                        dictcopy2 = copy.deepcopy(dictcopy)
-                        dictcopy2[car.name[0]] += car.moveability_list[1]
-
-                        # make a string of the dictionary
-                        x = str(dictcopy2)
-
-                        # check if the current set of moves leads to a board that has not been visited
-                        if x not in moves_set:
-                            # if unique, add to the queue and the set with all the visited boards
-                            counter += 1
-                            queue.append(scopy)
-                            moves_set.add(x)
+            for i in range (0, 1000000):
                 
-                # print the ammount of visited boards.
-                # print(len(moves_set))
-                # print(self.rushhour.board)
+                # try to pick a random move
+                try:
+                    move = random.choice(moveable_cars)
+                # if no moves, return False
+                except IndexError: 
+                    return False
+
+                # copy and update the dictionary with the netto car positions
+                dictcopy2 = copy.deepcopy(cars_dictionary)
+                if move[1] == "+":
+                    movement = int(move[2]) 
+                else:
+                    movement = -int(move[2])
+                dictcopy2[move[0]] += movement
+
+                # make a string of the dictionary
+                x = str(dictcopy2)
+
+                # check if the current set of moves leads to a board that has not been visited
+                if x not in moves_set:
+                    moves_set.add(x)
+                    break
+                # if not, remove the car from moveable cars
+                else:
+                    moveable_cars.remove(move)
+        return s 
+   
+    def find_solution(self, maximum_depth):
+        
+        """
+        Runs Depth random until it finds a solution with a depth lower than maximum depth
+        """
+
+        Copy = copy.deepcopy(self.rushhour)
+        depth = maximum_depth + 1
+        while depth > maximum_depth:
+            self.rushhour = copy.deepcopy(Copy)
+            solution = Depth_random.Depth_Random(self, depth)
+            if solution is not False:
+                depth = len(solution)
+            print(f"the current depth = {depth}")
+        return solution
+    
+    def optimalize_solution(self, maximum_depth, move_list):
+
+        """
+        Takes a solution as input, given by move_list and tries to shorten this solution
+        """
+
+        Copy = copy.deepcopy(self.rushhour)
+        List = move_list
+
+        # iterate till asked depth is reached
+        while len(List) > maximum_depth:
+            
+            # we search half the length of the given tree
+            search_length = int(len(List)/2)
+            
+            # print the list in case anybody wants to  quit the algorithm before it is finished
+            print(f"the length of the list = {len(List)}")
+            print(List)
+
+            self.rushhour = copy.deepcopy(Copy)
+            
+            # take half of the given move list
+            List = List[0:len(List)-search_length]
+            
+            # execute half
+            for move in List:
+                self.execute_move_command(move)
+
+            # build the board after all the moves are executed
+            self.rushhour.board = helpers.build(self.rushhour.board.width_height + 1, self.rushhour.cars)
+          
+            board_copy = copy.deepcopy(self.rushhour)   
+
+            # set depth to search length
+            depth = search_length
+            
+            # counter = 0
+            
+            while depth > search_length - 1:
+                # counter += 1
+                # print(f"counter = {counter}")
+                bf = copy.deepcopy(Depth_random(board_copy))
+                s = bf.Depth_Random(depth)
+                if s is not False:
+                    depth = len(s)
+                # print(counter)
+            List.extend(s)
+        
+        # if desired depth is found, return moves.
+        return List
+
+    def find_optimised_solution(self, max_1, max_2):
+        """
+        finds a solution and optimalises it. The max_1 is the depth limit till which find_solution searches, max_2 is the depth limit till which it is optimised
+        """
+        Copy = copy.deepcopy(self)
+        List = self.find_solution(max_1)
+        self = copy.deepcopy(Copy)
+        optimised_list = self.optimalize_solution(max_2, List)
+        return optimised_list
