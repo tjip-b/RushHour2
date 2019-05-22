@@ -8,126 +8,6 @@ class DepthF():
         self.rushhour = rushhour
         self.depth = depth
         self.cars_dictionary = {}
-    
-    """
-    def depth_first_try(self):
-        stack = []                  
-        cur_depth = -1              # current search depth
-        max_depth = self.depth      # maximum depth, devines nodes at this depth as leaves
-        last_node = None            # string of dicts of last node traversed
-        carlist = []                # list of car objects 
-        n = 0                       # amount of nodes
-        archive = set()
-        childs_list = []
-
-        stack.append(self.rushhour.board) # push de beginstate op de stack
-
-        while stack:
-            current = copy.deepcopy(stack.pop())
-            archive.add(str(copy.deepcopy(current.positions)))
-            print(archive)
-
-            # make all childs of the item
-            for car in current.cars:
-                # check which cars are moveable
-                car.moveability(current.board)
-
-                # if car is moveable to the left or upwards
-                if car.moveability_list[0] is not 0:
-                    
-                    # add all number of steps as moves to the stack
-                    for i in range(0, car.moveability_list[0]):
-                        car.move()
-
-                # if car is moveable to the right or downwards
-                if car.moveability_list[1] is not 0:
-
-                    # add all number of steps as moves to the stack
-                    for i in range(1, car.moveability_list[1] + 1):
-                        stack.append([car.name[0] + "+" + str(i)])
-            
-
-            # add all children to the stack
-            for child in childs_list:
-                stack.add(child)
-    """
-
-    def build_board(self, move_list):
-        """ excecutes all the moves in moves_list and
-            builds a board according to those moves.
-        """
-        dictcopy = copy.deepcopy(self.cars_dictionary)
-        # iterate through the move commands in s
-        for i in move_list:
-
-            # initialise CAR
-            CAR = None
-            carletter = i[0]
-            car_list = copy.deepcopy(self.rushhour.cars)
-
-            # set CAR to the car that is in the move command
-            for car in car_list:
-                if car.name[0] == (carletter):
-                    CAR = car
-                    break
-            
-            # check if the movement is right or up (+) or left or down (-)
-            if i[1] == "+":
-                move = int(i[2])
-            else:
-                move = -int(i[2])
-            
-            # execute the move
-            CAR.move3(move)
-
-            # build the board after all the moves are executed
-            new_board = self.build(car_list)
-            
-
-            return new_board
-
-    def build2(self, move):
-        """"
-        moves car with a string like 'D-1', then builds board
-        """
-        size = self.rushhour.board.width_height + 1
-        cars = copy.deepcopy(self.rushhour.cars)
-
-        for car in cars:
-            if car.name[0] == move[0]:
-                if move[1] == '+':
-                    car.move3(int(move[2]))
-                else:
-                    car.move3(-int(move[2]))
-                break
-
-        board_positions = []
-        row = []
-
-        # construct an empty board
-        for i in range (0, size):
-            row.append("x")
-        for i in range (0, size):
-            board_positions.append(copy.copy(row))
-        
-        # place the cars on the board
-        for car in cars:
-            # check the orientation of the car
-            if car.direction == "horizontal":
-                # change the x's to the car letter.
-                for i in range(0, car.size):
-                    board_positions[car.row][car.col + i] = car.name[0]
-                    
-            # same for vertical cars
-            else:
-                for i in range (int(car.size)):
-                    board_positions[car.row + i][car.col] = car.name[0]
-
-        # make a new board object
-        board = Board(size-1, board_positions, (size)/2-1, 0)  
-        
-        # return the board object
-        return board 
 
     def build(self):
         """"
@@ -135,7 +15,6 @@ class DepthF():
         """
         size = self.rushhour.board.width_height + 1
         cars = copy.deepcopy(self.rushhour.cars)
-
         board_positions = []
         row = []
 
@@ -172,14 +51,11 @@ class DepthF():
         start = time.time()
         stack = []       
         initial_moves = []           
-        cur_depth = -1              # current search depth
+        current_depth = -1          # current search depth
         max_depth = self.depth      # maximum depth, devines nodes at this depth as leaves
-        last_node = None            # string of dicts of last node traversed
-        carlist = []                # list of car objects 
         n = 0                       # amount of nodes
-        archive_moves = set()
-        archive_boards = set()
-
+        archive = {}                # dict needed for pre pruning which contains all visited boards. 
+        
         # find first moveable options and place them in the stack
         for car in self.rushhour.cars:
 
@@ -189,27 +65,17 @@ class DepthF():
             # if car is moveable to the left or upwards
             if car.moveability_list[0] is not 0:
                 stack.append([car.name[0] + "-" + str(car.moveability_list[0])])
-                # add all number of steps as moves to the stack
-                # for i in range(1, car.moveability_list[0] + 1):
-                #     initial_moves.append([car.name[0] + "-" + str(i)])
 
             # if car is moveable to the right or downwards
             if car.moveability_list[1] is not 0:
-                stack.append([car.name[0] + "+" + str(car.moveability_list[1])])
-
-                # # add all number of steps as moves to the stack
-                # for i in range(1, car.moveability_list[1] + 1):
-                #     initial_moves.append([car.name[0] + "+" + str(i)])
-
-        # set needed for pre pruning which contains all visited boards. 
-        moves_set = set()
+                stack.append([car.name[0] + "+" + str(car.moveability_list[1])])        
 
         # make a dictionary with all the cars, which is used later.
         for car in self.rushhour.cars:
             self.cars_dictionary[car.name[0]] = 0
         
-        # append dictionary to set and list. it is added as a string to the set so it can be hashed. 
-        moves_set.add(str(self.cars_dictionary))
+        # start netto movement positions (equivalent to start board) added to archive
+        archive[str(self.cars_dictionary)] = 0
 
         # find the initial position of the red car and make an object redcar 
         for car in self.rushhour.cars:
@@ -219,12 +85,6 @@ class DepthF():
         print(f"pre stack: {stack}")
         print(initial_moves)
 
-        
-
-        # for initial_move in initial_moves:
-        #     print(initial_move)
-        #     stack.append(initial_move)
-            # go on till solution is found or stack is empty
         while stack:
             # set everything to the initial state
             self.rushhour.board = copy.deepcopy(self.rushhour.initialboard)
@@ -240,27 +100,10 @@ class DepthF():
             print(f"n = {n}")
             n += 1
 
-            # build board and return all needed values
-            # return_list = self.build_board(s)
-
-            # current_board = return_list[0]
-            # cars_list = return_list[1]
-            # dictcopy = return_list[2]
-
-            # print(current_board)
-            # print(cars_list)
-            # print(dictcopy)
-
-            # if str(s) in archive_moves:
-            #     continue
-
-            print(s)
             # check depth of current item
-            cur_depth = len(s)
-            if cur_depth > max_depth:
-            #     # archive_boards.add(str(self.rushhour.board))
-                continue
-
+            current_depth = len(s)
+            if current_depth > max_depth:
+                continue        
 
             # iterate through the move commands in s
             for i in s:
@@ -286,17 +129,12 @@ class DepthF():
                 
                 # execute the move
                 CAR.move3(move) 
+            
+            # add netto movements (equivalent to positions on the board) to archive
+            archive[(str(dictcopy))] = len(s)
         
             # build the board after all the moves are executed
-            self.rushhour.board = self.build()
-
-            archive_boards.add(str(self.rushhour.board.positions))
-            
-            # if str(self.rushhour.board) in archive_boards:
-            #     print("CONTINUED!")
-            #     print(self.rushhour.board)
-            #     continue
-                
+            self.rushhour.board = self.build()                
 
             # create an object for the red car, named redcar
             for car in self.rushhour.cars:
@@ -312,11 +150,12 @@ class DepthF():
                 # set new depth limit
                 max_depth = len(s)
 
+                print(len(s))
                 print(f"time is {end - start}")
                 print(self.rushhour.board)
+                
+                print(current_depth)
                 return True
-
-            
 
             # check all possible moves for each car
             for car in self.rushhour.cars:
@@ -330,22 +169,25 @@ class DepthF():
                 if car.moveability_list[0] is not 0:
                     
                     scopy = copy.deepcopy(s)
-                    # print(self.build())
                     # # append the new move  
-                    move = car.name[0] + "-" + str(car.moveability_list[0])
-                    # print(move)
-                    # print("build -")
-                    # print(self.rushhour.board)
-                    # car.move3(-int(car.moveability_list[0]))
-                    # self.rushhour.board = self.build()
-                    # print(self.rushhour.board)
-                    build_board = self.build2(move)
+                    scopy.append(car.name[0] + "-" + str(car.moveability_list[0]))
 
-                    scopy.append(move)
-                    
-                    # print(self.build2(scopy[-1]))
-                    #if str(build_board.positions) not in archive_boards and not len(scopy) > max_depth:
-                    stack.append(scopy)
+                    # create copy of netto movements (equivalent to board.positions)
+                    dictcopy2 = copy.deepcopy(dictcopy)
+                    dictcopy2[car.name[0]] += -car.moveability_list[0]
+
+                    # string version of the netto moves dictionary (equivalent to board.positions)
+                    current_netto_moves = str(dictcopy2)
+
+                    # check if the current set of moves leads to a board that has not been visited
+                    if current_netto_moves not in archive:
+                        # if unique, add to the queue and the set with all the visited boards
+                        stack.append(scopy)
+                    else: 
+                        move_length = archive[str(current_netto_moves)]
+                        if len(scopy) < move_length:
+                            stack.append(scopy)
+                            archive[str(current_netto_moves)] = move_length
 
                 # if moveable to the right or upwards
                 if car.moveability_list[1] is not 0:
@@ -353,36 +195,25 @@ class DepthF():
                     scopy = copy.deepcopy(s)
                     
                     # append the new move  
-                    move = (car.name[0] + "+" + str(car.moveability_list[1]))
+                    scopy.append(car.name[0] + "+" + str(car.moveability_list[1]))
+                
+                    # create copy of netto movements (equivalent to board.positions)
+                    dictcopy2 = copy.deepcopy(dictcopy)
+                    dictcopy2[car.name[0]] += car.moveability_list[1]
 
-                    build_board = self.build2(move)
-                    
-                    scopy.append(move)
+                    # make a string of the dictionary
+                    current_netto_moves = str(dictcopy2)
 
-                    #if str(build_board.positions) not in archive_boards and not len(scopy) > max_depth:
-                    stack.append(scopy)
+                    # check if the current set of moves leads to a board that has not been visited
+                    if current_netto_moves not in archive:
+                        # if unique, add to the queue and the set with all the visited boards
+                        stack.append(scopy)
+                    else: 
+                        # check if currently reached board has less moves than previously reached boards
+                        move_length = archive[str(current_netto_moves)]
+                        if len(scopy) < move_length:
+                            stack.append(scopy)
+                            archive[str(current_netto_moves)] = move_length
 
-
-
-                    # print(move)
-                    # print("build +")
-                    # print(self.rushhour.board)
-                    # car.move3(car.moveability_list[1])
-                    
-                    # self.rushhour.board = self.build()
-                    # print(self.rushhour.board)
-                    
-                    
-                    # print(self.build2(scopy[-1]))
-
-                    
-        
-            # print the ammount of visited boards.
-            #print(len(moves_set))
-
-            #archive_board = self.build()
-
-            # archive_moves.add(str(s))
-            # archive_boards.add(str(archive_board))
-            #print(archive_board)
+            
             
