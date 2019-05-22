@@ -158,21 +158,23 @@ class RushHour():
         self.board.cars = cars
         return cars
 
+    def play(self):
+        board_list = ["easy", "easy2", "easy3", "medium", "medium2", "medium3", "hard"]
+        # execute the depthfirst method
+        if (len(sys.argv) == 3 and sys.argv[2] == "breadth_first"
+                and sys.argv[1] in board_list):
+            rush_hour = RushHour(sys.argv[1])
+            bf = BreadthF(rush_hour)
+            bf.breadth_first()
+        # execute the depthfirst method
+        elif (len(sys.argv)) == 4 and sys.argv[2] == "depth_first" and sys.argv[1] in board_list and sys.argv[3].isnumeric():
+            rush_hour = RushHour(sys.argv[1])
+            df = DepthF(rush_hour, sys.argv[3])
+            df.depth_first()
+        else:
+            print("usage: python RushHour.py <board> <method> <depth (for depth_first)>")
+
 
 if __name__ == "__main__":
-
-    board_list = ["easy", "easy2", "easy3", "medium", "medium2", "medium3", "hard"]
-
-    # execute the depthfirst method
-    if (len(sys.argv) == 3 and sys.argv[2] == "breadth_first"
-            and sys.argv[1] in board_list):
-        rush_hour = RushHour(sys.argv[1])
-        bf = BreadthF(rush_hour)
-        bf.breadth_first()
-    # execute the depthfirst method
-    elif (len(sys.argv)) == 4 and sys.argv[2] == "depth_first" and sys.argv[1] in board_list and sys.argv[3].isnumeric():
-        rush_hour = RushHour(sys.argv[1])
-        df = DepthF(rush_hour, sys.argv[3])
-        df.depth_first()
-    else:
-        print("not the right useage!")
+    rush_hour = RushHour(sys.argv[1])
+    rush_hour.play()
