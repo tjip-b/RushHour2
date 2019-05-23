@@ -9,17 +9,17 @@
 # This program runs the game of Rush Hour.
 ###############################################################################
 
-import arcade
 from board import Board
 from car import Car
 from bruteforce import Bruteforce
 from breadthF import BreadthF
 from depthF import DepthF
-from depthrandom import DepthRandom
+from depthrandom import Depth_random
 from random import randint
 import time
 import sys
 import copy
+from algorithms import Algorithm
 
 
 class RushHour():
@@ -160,21 +160,57 @@ class RushHour():
 
     def play(self):
         board_list = ["easy", "easy2", "easy3", "medium", "medium2", "medium3", "hard"]
-        # execute the depthfirst method
-        if (len(sys.argv) == 3 and sys.argv[2] == "breadth_first"
-                and sys.argv[1] in board_list):
+        # execute the breadthfirst method
+        if (len(sys.argv) == 4 or len(sys.argv) == 5 and sys.argv[2] == "breadth" and sys.argv[1] in board_list):
             rush_hour = RushHour(sys.argv[1])
-            bf = BreadthF(rush_hour)
-            bf.breadth_first()
+            bf = Algorithm(rush_hour)
+            if len(sys.argv) == 4:
+                # makes all possible moves children to be appended to the queue
+                if sys.argv[3] == "all":
+                    bf.breadth_first(False, 0)
+                # only makes the maximum possible moves children to be appended to the queue
+                else:
+                    bf.breadth_first(True, 0)
+            # alternate version of breadth first takes a 'breadth' parameter of > 0
+            if len(sys.argv) == 5:
+                if sys.argv[3] == "all":
+                    bf.breadth_first(False, int(sys.argv[4]))
+                else:
+                    bf.breadth_first(True, int(sys.argv[4]))
+
         # execute the depthfirst method
-        elif (len(sys.argv)) == 4 and sys.argv[2] == "depth_first" and sys.argv[1] in board_list and sys.argv[3].isnumeric():
+        elif (len(sys.argv)) == 6 and sys.argv[2] == "depth" and sys.argv[1] in board_list and sys.argv[4].isnumeric():
             rush_hour = RushHour(sys.argv[1])
-            df = DepthF(rush_hour, sys.argv[3])
-            df.depth_first()
+            df = Algorithm(rush_hour)
+            # add all moves or only add the furthest moves to stack
+            if sys.argv[3] == "all":
+                # pruning method maximum or only prune off identical children with higher depth
+                if sys.argv[5] == "max":
+                    df.depth_first(int(sys.argv[4]), True, False)
+                elif sys.argv[5] == "min":
+                    df.depth_first(int(sys.argv[4]), False, False)
+                else: 
+                    print("usage: please state 'min' or 'max' as 5th argument")
+            elif sys.argv[3] == "furthest":
+                if sys.argv[5] == "max":
+                    df.depth_first(int(sys.argv[4]), True, True)
+                elif sys.argv[5] == "min":
+                    df.depth_first(int(sys.argv[4]), False, True)
+                else: 
+                    print("usage: please explicitly state 'min' or 'max' as 5th argument")
+            else:
+                print("usage: please explicitly state 'all' or 'furthest' as 3th argument")
+        
+        # execute depthrandom method
+        elif (len(sys.argv)) == 4 and sys.argv[2] == "depth_random" and sys.argv[1] in board_list and sys.argv[3].isnumeric():
+            rush_hour = RushHour(sys.argv[1])
+            df = Algorithm(rush_hour)
+            df.depth_random(int(sys.argv[3]))
         else:
-            print("usage: python RushHour.py <board> <method> <depth (for depth_first)>")
+            print("usage: python RushHour.py <board> <method> <movement method> <depth/breadth (for depth_first)> <pruning method (for depth_first)> ")
 
 
 if __name__ == "__main__":
+
     rush_hour = RushHour(sys.argv[1])
     rush_hour.play()

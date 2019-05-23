@@ -6,7 +6,7 @@ import time
 import random
 
 class Algorithm():
-    def __init__ (self, rushhour, algorithm):
+    def __init__ (self, rushhour):
         self.rushhour = rushhour
 
     def check_if_won(self):
@@ -108,7 +108,7 @@ class Algorithm():
         CAR.move3(move) 
         return move
     
-    def depth_first(self, depth, max_pruning, max_movement):
+    def depth_first(self, depth, depth_pruning, max_movement):
         """ Implementation of the depth first search algorithm for
             the rush hour game. Takes a max depth limit as parameter.
             Also takes a bool for the pruning method:
@@ -123,7 +123,12 @@ class Algorithm():
         current_depth = -1          # current search depth
         max_depth = depth           # maximum depth, devines nodes at this depth as leaves
         n = 0                       # amount of nodes
-        archive = {}                # dict needed for pruning which contains all visited boards 
+        
+        # make archive set or dict depending on pruning method
+        if depth_pruning:
+            archive = {}            # dict needed for pruning which contains all visited boards
+        else:
+            archive = set() 
         cars_dictionary = {}        # dictionary with all netto car movements (equivalent to board.positions)
         
         # find first moveable options and place them in the queue
@@ -136,8 +141,12 @@ class Algorithm():
         for car in self.rushhour.cars:
             cars_dictionary[car.name[0]] = 0
         
-        # start netto movement positions (equivalent to start board) added to archive
-        archive[str(cars_dictionary)] = 0
+        if depth_pruning:
+            # start netto movement positions (equivalent to start board) added to archive
+            archive[str(cars_dictionary)] = 0
+        else:
+            # append dictionary to set and list. it is added as a string to the set so it can be hashed. 
+            archive.add(str(cars_dictionary)) 
 
         while stack:
             # set everything to the initial state
@@ -178,8 +187,9 @@ class Algorithm():
                 print(f"amount of moves / depth: {len(s)}")
                 return True
             
-            # add netto movements (equivalent to positions on the board) to archive
-            archive[(str(dictcopy))] = len(s)           
+            if depth_pruning:
+                # add netto movements (equivalent to positions on the board) to archive
+                archive[(str(dictcopy))] = len(s) 
 
             # make all possible moves
             move_list = self.moves_list(max_movement)
@@ -203,17 +213,25 @@ class Algorithm():
                 # string version of the netto moves dictionary (equivalent to board.positions)
                 current_netto_moves = str(dictcopy2)
 
-                # check if the current set of moves leads to a board that has not been visited
-                if current_netto_moves not in archive:
-                    # if unique, add to the queue and the set with all the visited boards
-                    stack.append(scopy)
-                else: 
-                    move_length = archive[str(current_netto_moves)]
-                    if len(scopy) < move_length:
+                # select type of pruning method
+                if depth_pruning:
+                    # check if the current set of moves leads to a board that has not been visited
+                    if current_netto_moves not in archive:
+                        # if unique, add to the queue and the set with all the visited boards
                         stack.append(scopy)
-                        archive[str(current_netto_moves)] = move_length
+                    else: 
+                        move_length = archive[str(current_netto_moves)]
+                        if len(scopy) < move_length:
+                            stack.append(scopy)
+                            archive[str(current_netto_moves)] = move_length
+                else:
+                    # check if the current set of moves leads to a board that has not been visited
+                    if current_netto_moves not in archive:
+                        # if unique, add to the queue and the set with all the visited boards
+                        stack.append(scopy)
+                        archive.add(current_netto_moves)
 
-    def breadth_first(self, max_movement):        
+    def breadth_first(self, max_movement, breadth):        
         nodes_at_treelevel = []
         node_counter = 0
         len_s = 0
@@ -221,7 +239,6 @@ class Algorithm():
         self.initialboard = copy.deepcopy(self.rushhour.initial_board)
         self.initialcars = copy.deepcopy(self.rushhour.initial_cars)
         queue = []
-        carlist = []
         n = 0
 
         # find first moveable options and place them in the queue
@@ -243,12 +260,13 @@ class Algorithm():
 
         # go on till solution is found or queue is empty
         while queue:
-            
+            # uses different counters deppending on the version of breadth first
+            counter = 0
             node_counter += 1
             
             # set everything to the initial state
-            self.rushhour.board = copy.deepcopy(self.initialboard)
-            self.rushhour.cars = copy.deepcopy(self.initialcars)
+            self.rushhour.board = copy.deepcopy(self.rushhour.initial_board)
+            self.rushhour.cars = copy.deepcopy(self.rushhour.initial_cars)
 
             # make a copy of the "standard" car dictionary
             dictcopy = copy.deepcopy(cars_dictionary)
@@ -283,29 +301,68 @@ class Algorithm():
             # make all possible moves
             move_list = self.moves_list(max_movement)
             
-            for move in move_list:
-                
-                # copy the moves that led to the present board
-                scopy = copy.deepcopy(s)
+            # two versions of breadth first branch off here
+            if breadth > 0:
+                # while counter <= breadth:
+                for i in range (0, 1000000):
+
+                    if counter >= breadth:
+                        move_list.clear()
+                        break
+
+                    try:
+                        move = random.choice(move_list)
+                    except IndexError: 
+                        break
+
+                    scopy = copy.deepcopy(s)
                     
-                # append the new move  
-                scopy.append(move)
+                    # append the new move  
+                    scopy.append(move)
+                    dictcopy2 = copy.deepcopy(dictcopy)
+                    # copy and update the dictionary with the netto car positions
+                    if move[1] == "-":
+                        dictcopy2[move[0]] += -int(move[2])
+                    else:
+                        dictcopy2[move[0]] += int(move[2])
 
-                # copy and update the dictionary with the netto car positions
-                dictcopy2 = copy.deepcopy(dictcopy)
-                if move[1] == "-":
-                    dictcopy2[move[0]] += -int(move[2])
-                else:
-                    dictcopy2[move[0]] += int(move[2])
+                    # make a string of the dictionary
+                    x = str(dictcopy2)
 
-                # make a string of the dictionary
-                x = str(dictcopy2)
+                    # check if the current set of moves leads to a board that has not been visited
+                    if x not in archive:
+                        # if unique, add to the queue and the set with all the visited boards
+                        queue.append(scopy)
+                        archive.add(x)
+                        move_list.remove(move)
+                        counter += 1
+                    else:
+                        move_list.remove(move)
 
-                # check if the current set of moves leads to a board that has not been visited
-                if x not in archive:
-                    # if unique, add to the queue and the set with all the visited boards
-                    queue.append(scopy)
-                    archive.add(x)
+            else:
+                for move in move_list:
+                    
+                    # copy the moves that led to the present board
+                    scopy = copy.deepcopy(s)
+                        
+                    # append the new move  
+                    scopy.append(move)
+
+                    # copy and update the dictionary with the netto car positions
+                    dictcopy2 = copy.deepcopy(dictcopy)
+                    if move[1] == "-":
+                        dictcopy2[move[0]] += -int(move[2])
+                    else:
+                        dictcopy2[move[0]] += int(move[2])
+
+                    # make a string of the dictionary
+                    x = str(dictcopy2)
+
+                    # check if the current set of moves leads to a board that has not been visited
+                    if x not in archive:
+                        # if unique, add to the queue and the set with all the visited boards
+                        queue.append(scopy)
+                        archive.add(x)
     
     def depth_random(self, depth):        
         """
@@ -445,7 +502,7 @@ class Algorithm():
             # counter = 0
             
             while depth > search_length - 1:
-                bf = copy.deepcopy(Depth_random(board_copy))
+                bf = copy.deepcopy(Algorithm(board_copy))
                 s = bf.Depth_Random(depth)
                 if s is not False:
                     depth = len(s)
