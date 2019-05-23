@@ -26,7 +26,7 @@ End with an example of getting some data out of the system or using it for a lit
 
 To run our program, please read through the following documentation. Things to be filled in as argument will be **bold**:
 ```
-python rushhour.py <board> <algorithm> <depth/breadth (for depth_first)> <pruning method> <movement method>"
+python rushhour.py <board> <algorithm> <depth/breadth (for depth_first)> <pruning method> <movement method>
 ```
 Boards to choose from <board>: 
   - **easy**
