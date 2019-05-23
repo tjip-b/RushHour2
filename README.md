@@ -29,33 +29,33 @@ To run our program, specify the board and the algorithm used. Use this format:
 python rushhour.py <board> <algorithm> <depth/breadth (for depth_first)> <pruning method> <movement method>"
 ```
 Boards to choose from <board>: 
-  - easy
-  - easy2
-  - easy3
-  - medium
-  - medium2
-  - medium3
-  - hard
+  - **easy**
+  - **easy2**
+  - **easy3**
+  - **medium**
+  - **medium2**
+  - **medium3**
+  - **hard**
 
 Algorithms to choose from <algorithm>:
-  - breadth (Breadth First Search)
-  - depth (Depth First Search)
-  - depth_random (************)
+  - **breadth** (Breadth First Search)
+  - **depth** (Depth First Search)
+  - **depth_random** (************)
   
 Movement Method <movement method>:
   Please enter one of the following:
-  - all: all cars make all possible movements.
-  - furthest: all cars only make the furthest possible movements.
+  - **all**: all cars make all possible movements.
+  - **furthest**: all cars only make the furthest possible movements.
   
 Depth/Breadth limit <depth/breadth limit>:
-  - Depth: When running the depth first algorithm, please enter an integer as maximum depth. The algorithm will not consider boards which have more moves than the specified amount. 
+  - Depth: When running the depth first algorithm, please enter an integer **as maximum** depth. The algorithm will not consider boards which have more moves than the specified amount. 
 
-  - Breadth (Optional): When running the breadth first algorithm, entering an integer as breadth limit will run an adjusted version of breadth first where.*.*..*...*...*....**..*......*..*.*....*....*
+  - Breadth (Optional): When running the breadth first algorithm, entering **an integer** as breadth limit will run an adjusted version of breadth first where.*.*..*...*...*....**..*......*..*.*....*....*
 
 Different pruning for depth first <pruning method>:
   When running depth first, the method of pruning should be specified by typing:
-    - max: if child is already in the archive > do not add child to stack
-    - min: if child is already in the archive AND the depth of this child is higher than the depth of the node found in the archive > do not add child to stack
+    - **max**: if child is already in the archive > do not add child to stack
+    - **min**: if child is already in the archive AND the depth of this child is higher than the depth of the node found in the archive > do not add child to stack
   
 Choosing to run depth first search on the easy2 board would look like this:
 ```
