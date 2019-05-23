@@ -1,4 +1,3 @@
-template copied from: purplebooth :https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
 # RushHour2
 
 Algortihm that solves the board game rush hour. There are three implemented methods: Breadth First, Depth First and Branchh & Bound. These methods can be applied on seven different boards (three 6x6 easy boards, three 9x9 medium boards and one 12x12 hard board) which are included in the /data folder (the seven different boards can be viewed at http://heuristieken.nl/wiki/index.php?title=Rush_Hour).
@@ -17,18 +16,8 @@ Give examples
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
 ```
-Give the example
-```
-
-And repeat
-
-```
-until finished
+pip install -r requirements.txt
 ```
 
 End with an example of getting some data out of the system or using it for a little demo
@@ -37,9 +26,9 @@ End with an example of getting some data out of the system or using it for a lit
 
 To run our program, specify the board and the algorithm used. Use this format:
 ```
-python RushHour.py <board> <algorithm>
+python rushhour.py <board> <algorithm> <depth/breadth (for depth_first)> <pruning method> <movement method>"
 ```
-Boards to choose from:
+Boards to choose from <board>: 
   - easy
   - easy2
   - easy3
@@ -48,10 +37,25 @@ Boards to choose from:
   - medium3
   - hard
 
-Algorithms to choose from:
+Algorithms to choose from <algorithm>:
   - breadth (Breadth First Search)
   - depth (Depth First Search)
-  - branch (Branch and Bound)
+  - depth_random (************)
+  
+Movement Method <movement method>:
+  Please enter one of the following:
+  - all: all cars make all possible movements.
+  - furthest: all cars only make the furthest possible movements.
+  
+Depth/Breadth limit <depth/breadth limit>:
+  - Depth: When running the depth first algorithm, please enter an integer as maximum depth. The algorithm will not consider boards which have more moves than the specified amount. 
+
+  - Breadth (Optional): When running the breadth first algorithm, entering an integer as breadth limit will run an adjusted version of breadth first where.*.*..*...*...*....**..*......*..*.*....*....*
+
+Different pruning for depth first <pruning method>:
+  When running depth first, the method of pruning should be specified by typing:
+    - max: if child is already in the archive > do not add child to stack
+    - min: if child is already in the archive AND the depth of this child is higher than the depth of the node found in the archive > do not add child to stack
   
 Choosing to run depth first search on the easy2 board would look like this:
 ```
@@ -60,14 +64,6 @@ python RushHour.py easy2 depth
 
 
 ### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
 
 Explain what these tests test and why
 
@@ -106,4 +102,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments
 
 * Readme example copied from PurpleBooth: https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
+
 
