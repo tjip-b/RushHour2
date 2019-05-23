@@ -24,7 +24,7 @@ End with an example of getting some data out of the system or using it for a lit
 
 ## Running the tests
 
-To run our program, specify the board and the algorithm used. Use this format:
+To run our program, please read through the following documentation. Things to be filled in as argument will be **bold**:
 ```
 python rushhour.py <board> <algorithm> <depth/breadth (for depth_first)> <pruning method> <movement method>"
 ```
@@ -48,7 +48,7 @@ Movement Method <movement method>:
   - **furthest**: all cars only make the furthest possible movements.
   
 Depth/Breadth limit <depth/breadth limit>:
-  - Depth: When running the depth first algorithm, please enter an integer **as maximum** depth. The algorithm will not consider boards which have more moves than the specified amount. 
+  - Depth: When running the depth first algorithm, please enter **an integer** as maximum depth. The algorithm will not consider boards which have more moves than the specified amount. 
 
   - Breadth (Optional): When running the breadth first algorithm, entering **an integer** as breadth limit will run an adjusted version of breadth first where.*.*..*...*...*....**..*......*..*.*....*....*
 
