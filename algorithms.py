@@ -372,47 +372,49 @@ class Algorithm():
 
     def depth_random(self, depth):
         """
-        Random searches for a solution till a given depth. Returns the solution.
+        Random searches for a solution till a given depth. Returns the solution
         """
-        # Set needed variables
+
+        # set needed variables
         start = time.time()
         n = 0
 
-        # Make a list with moveable cars
+        # make a list with moveable cars
         moveable_cars = self.moves_list(depth)
 
-        # Pick a random move
+        # pick a random move
         move = random.choice(moveable_cars)
 
-        # Make a set that contains all visited boards
+        # make a set that contains all visited boards
         archive = set()
 
-        # Make a dictionary that contains all cars with their netto movement
+        # make a dictionary that contains all cars with their netto movement
         cars_dictionary = {}
         for car in self.rush_hour.cars:
             cars_dictionary[car.name[0]] = 0
 
-        # Append dictionary to set
-        # It is added as a string to the set so it can be hashed
+        # append dictionary to set. it is added as a string to the set so it can be hashed.
         archive.add(str(cars_dictionary))
 
-        # Make a list that will contain all executed moves
+        # make a list that will contain all executed moves
         s = []
 
         while n < depth:
             n += 1
-            # Execute move and save it in the dictionary
+
+            # execute move and save it in the dictionary
             self.execute_move_command(move)
             if move[1] == "+":
                 movement = int(move[2])
             else:
                 movement = -int(move[2])
-            cars_dictionary[car.name[0]] += movement
 
-            # Archive.add(str(cars_dictionary))
+            cars_dictionary[move[0]] += movement
+
+            # save all done moves
             s.append(move)
 
-            # Build the board
+            # build the board
             self.rush_hour.board = helpers.build(
                 self.rush_hour.board.width_height + 1, self.rush_hour.cars)
 
@@ -425,37 +427,40 @@ class Algorithm():
                 print(self.rush_hour.board)
                 return s
 
-            # Check all possible moves for each car and add them to a list
-            moveable_cars = self.moves_list(False)
+            # check all possible moves for each car and add them to a list
+            moveable_cars = self.moves_list(True)
 
+            # return
             for i in range(0, 1000000):
-
-                # Try to pick a random move
                 try:
                     move = random.choice(moveable_cars)
-                # If no moves, return False
+
+                # if no moves, return False
                 except IndexError:
+                    print("geen zetten meer!")
                     return False
 
-                # Copy and update the dictionary with the netto car positions
-                dict_copy2 = copy.deepcopy(cars_dictionary)
+                # copy and update the dictionary with the netto car positions
+                dictcopy2 = copy.deepcopy(cars_dictionary)
                 if move[1] == "+":
                     movement = int(move[2])
                 else:
                     movement = -int(move[2])
-                dict_copy2[move[0]] += movement
+                dictcopy2[move[0]] += movement
 
-                # Make a string of the dictionary
-                x = str(dict_copy2)
+                # make a string of the dictionary
+                x = str(dictcopy2)
 
-                # Check if the current set of moves leads to a board
-                # that has not been visited
+                # check if the current set of moves leads to a board that has not been visited
                 if x not in archive:
                     archive.add(x)
+                    # print(move)
                     break
+
                 # if not, remove the car from moveable cars
                 else:
                     moveable_cars.remove(move)
+        print("geen oplossing")
         return s
 
     def find_solution(self, maximum_depth):
@@ -513,7 +518,7 @@ class Algorithm():
 
             while depth > search_length - 1:
                 bf = copy.deepcopy(Algorithm(board_copy))
-                s = bf.Depth_Random(depth)
+                s = bf.depth_random(depth)
                 if s is not False:
                     depth = len(s)
             List.extend(s)
