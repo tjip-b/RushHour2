@@ -10,19 +10,12 @@ Our data structure consists of modules, with functions and classes. We have four
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
 
 ### Installing
 
-```
-pip install -r requirements.txt
-```
+
+No need for requirement.txt. Based only on pyhton 3.7
+
 
 End with an example of getting some data out of the system or using it for a little demo
 
@@ -44,7 +37,7 @@ Boards to choose from <board>:
 Algorithms to choose from <algorithm>:
   - **breadth** (Breadth First Search)
   - **depth** (Depth First Search)
-  - **depth_random** (************)
+  - **depth_random** (Searches random into the depth)
   
 Movement Method <movement method>:
   Please enter one of the following:
@@ -63,10 +56,13 @@ Different pruning for depth first <pruning method>:
   
 Choosing to run depth first search on the easy2 board would look like this:
 ```
-python RushHour.py easy2 depth
+python RushHour.py easy2 depth all max
 ```
 
-
+Choosing to run depth_random_optimalised search on the hard board would look like this:
+```
+python RushHour.py hard depth_random 10000 1000
+```
 ### Break down into end to end tests
 
 Explain what these tests test and why
@@ -79,25 +75,11 @@ Give an example
 
 Add additional notes about how to deploy this on a live system
 
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **Kevin Dekker**
+  **Siebren Kazemier**
+  **Tjip Bischoff
 
 ## License
 
@@ -105,6 +87,8 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Readme example copied from PurpleBooth: https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
+* Erik
+* from the programming minor at the University of Amsterdam:
+* Edwin, Daan & Wouter
 
 
