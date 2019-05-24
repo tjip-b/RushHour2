@@ -50,12 +50,17 @@ When running depth first, the method of pruning should be specified by typing:
   - **max** : if child is already in the archive > do not add child to stack
   - **min** : if child is already in the archive AND the depth of this child is higher than the depth of the node found in the archive > do not add child to stack
   
-#### depth_random: 
-depth random has two options, depth_random which takes **an integer** as depth limit till which it searches for a solution, and depth_random_optimalised which takes **an integer** and **an integer** as input. The first **integer** defines the max depth beneath which depth_random searches for a solution till it's found. The second **integer** improves this solution to a depth below **integer** 
-  
 Choosing to run depth first search on the easy2 board with movement method set to **all**, a depth level of **50** and the pruning level set to **max** would look like this:
 ```
 python RushHour.py easy2 depth all 50 max
+```
+  
+#### depth_random: 
+depth random has two options, depth_random which takes **an integer** as depth limit till which it searches for a solution, and depth_random_optimalised which takes **an integer** and **an integer** as input. The first **integer** defines the max depth beneath which depth_random searches for a solution till it's found. The second **integer** improves this solution to a depth below **integer** 
+
+Running depth_random on the medium2 board with a depth of 500 looks like this, note that depth_random doesn't take a movement method (all/furthest).
+```
+python RushHour.py medium2 depth_random 5000
 ```
 
 Choosing to run depth_random_optimalised search on the hard board would look like this:
