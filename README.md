@@ -51,13 +51,6 @@ python rushhour.py <board> <algorithm> <depth/breadth (for depth_first)> <prunin
     - **min**: if child is already in the archive AND the depth of this child is higher than the depth of the node found in the archive > do not add child to stack
   
 - depth_random: depth random has two options, depth_random which takes **an integer** as depth limit till which it searches for a solution, and depth_random_optimalised which takes **an integer** and **an integer** as input. The first **integer** defines the max depth beneath which depth_random searches for a solution till it's found. The second **integer** improves this solution to a depth below **integer** 
-
-- build_board has the following input: 
-python rushhour.py build_board <size of board> <number of size 2 cars> <number of size 3 cars> 
-building 9x9 board with 12 cars with size 2 and 8 cars with size 3 would look like this:
-```
-python rushhour.py build_board 9 12 8
-```  
   
 Choosing to run depth first search on the easy2 board would look like this:
 ```
@@ -68,6 +61,14 @@ Choosing to run depth_random_optimalised search on the hard board would look lik
 ```
 python RushHour.py hard depth_random 10000 1000
 ```
+
+#### Board builder
+- build_board has the following input: 
+python rushhour.py build_board <size of board> <number of size 2 cars> <number of size 3 cars> 
+building 9x9 board with 12 cars with size 2 and 8 cars with size 3 would look like this:
+```
+python rushhour.py build_board 9 12 8
+```  
 
 #### Writing code in main
 If you need to find multiple solutions, a simple code can be written in main. If, for example, you would like to run depth_random 100 times on the hard board and save the solutions, the following code works:
