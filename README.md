@@ -20,7 +20,7 @@ The usage looks as follows, please run in the main directory:
 ```
 python rushhour.py <board> <algorithm> <depth/breadth (for depth_first)> <pruning method> <movement method>
 ```
-#### Boards to choose from <board>: 
+#### Boards to choose from <board> (located in /data folder): 
   - **easy**
   - **easy2**
   - **easy3**
