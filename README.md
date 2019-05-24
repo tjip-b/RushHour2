@@ -2,6 +2,11 @@
 
 Algortihm that solves the board game rush hour. There are three implemented methods: Breadth First, Depth First and Branchh & Bound. These methods can be applied on seven different boards (three 6x6 easy boards, three 9x9 medium boards and one 12x12 hard board) which are included in the /data folder (the seven different boards can be viewed at http://heuristieken.nl/wiki/index.php?title=Rush_Hour).
 
+# Chosen data structure
+
+Our data structure consists of modules, with functions and classes. We have four classes. The first is Board, which is the rushhour board. The second is Car, which contains all the attributes of a car, such as its position, its length and its direction (hoirzontal or vertical). The third class is RushHour. In this class, Board and Car come together, so the game can be played. Our last class is algorithms. Algortihms contains the heuristic algorithms that are available to solve the board. There are three main methods in here, breadth_first, depth_first and depth_random which will be explained later. We have three modules, that contain algorithms that assist other functions. We have a load module, that loads the board, a helpers module that consists of assisting functios and a bruteforce module, that makes random moves.
+
+
 ## Getting Started
 
 No need for requirement.txt. Based only on pyhton 3.7. Should run out of the box
