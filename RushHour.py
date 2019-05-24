@@ -11,10 +11,7 @@
 
 from board import Board
 from car import Car
-from bruteforce import Bruteforce
-from breadthF import BreadthF
-from depthF import DepthF
-from depthrandom import Depth_random
+import bruteforce
 from random import randint
 import time
 import sys
@@ -106,20 +103,20 @@ class RushHour():
                             try:
                                 if positions[i][j + 2] == char:
                                     # x = i -- y = j
-                                    car = Car(char * 3, i, j, "horizontal", 3, False)
+                                    car = Car(char * 3, i, j, 0, 3, False)
                                     car.moveability(self.board)
                                     cars.append(car)
                                     continue
 
                                 # add 'x' at end of list just to be sure
                                 # index error wont occur
-                                car = Car(char * 2, i, j, "horizontal", 2, False)
+                                car = Car(char * 2, i, j, 0, 2, False)
                                 car.moveability(self.board)
                                 cars.append(car)
 
                             # car found, but not a 3 tile car
                             except IndexError:
-                                car = Car(char * 2, i, j, "horizontal", 2, False)
+                                car = Car(char * 2, i, j, 0, 2, False)
                                 car.moveability(self.board)
                                 cars.append(car)
                                 continue
@@ -134,15 +131,15 @@ class RushHour():
                             taken_cars.append(char)
                             try:
                                 if positions[i + 2][j] == char:
-                                    car = Car(char * 3, i, j, "vertical", 3, False)
+                                    car = Car(char * 3, i, j, 1, 3, False)
                                     car.moveability(self.board)
                                     cars.append(car)
                                     continue
-                                car = Car(char * 2, i, j, "vertical", 2, False)
+                                car = Car(char * 2, i, j, 1, 2, False)
                                 car.moveability(self.board)
                                 cars.append(car)
                             except IndexError:
-                                car = Car(char * 2, i, j, "vertical", 2, False)
+                                car = Car(char * 2, i, j, 1, 2, False)
                                 car.moveability(self.board)
                                 cars.append(car)
                                 continue
@@ -150,7 +147,7 @@ class RushHour():
                         continue
 
                 elif char == "r" and char not in taken_cars:
-                    redcar = Car("redCar", i, j, "horizontal", 2, True)
+                    redcar = Car("redCar", i, j, 0, 2, True)
                     redcar.moveability(self.board)
                     taken_cars.append(char)
                     cars.append(redcar)
@@ -161,7 +158,8 @@ class RushHour():
     def play(self):
         board_list = ["easy", "easy2", "easy3", "medium", "medium2", "medium3", "hard"]
         # execute the breadthfirst method
-        if (len(sys.argv) == 4 or len(sys.argv) == 5 and sys.argv[2] == "breadth" and sys.argv[1] in board_list):
+        if ((len(sys.argv) == 4 or len(sys.argv) == 5) and sys.argv[2] == "breadth" and sys.argv[1] in board_list):
+            print("dit is fout") 
             rush_hour = RushHour(sys.argv[1])
             bf = Algorithm(rush_hour)
             if len(sys.argv) == 4:
@@ -203,9 +201,16 @@ class RushHour():
         
         # execute depthrandom method
         elif (len(sys.argv)) == 4 and sys.argv[2] == "depth_random" and sys.argv[1] in board_list and sys.argv[3].isnumeric():
+            print("usage = <board> <method> <max depth>")
             rush_hour = RushHour(sys.argv[1])
             df = Algorithm(rush_hour)
             df.depth_random(int(sys.argv[3]))
+
+        elif (len(sys.argv)) == 5 and sys.argv[2] == "depth_random_optimalised" and sys.argv[1] in board_list and sys.argv[3].isnumeric():
+            rush_hour = RushHour(sys.argv[1])
+            df = Algorithm(rush_hour)
+            df.find_optimised_solution(int(sys.argv[3]), int(sys.argv[4]))
+
         else:
             print("usage: python RushHour.py <board> <method> <movement method> <depth/breadth (for depth_first)> <pruning method (for depth_first)> ")
 

@@ -40,9 +40,9 @@ class Car():
         """
         changes only the position of the car object, not the board itself
         """
-        if self.direction == "horizontal":
+        if self.direction == 0:
             self.col += move
-        if self.direction == "vertical":
+        if self.direction == 1:
             self.row += move
 
     def moveability(self, board):
@@ -54,7 +54,7 @@ class Car():
         self.moveability_list = [0, 0]
 
         # horizontal
-        if self.direction == "horizontal":
+        if self.direction == 0:
             # the position to which the car wants to move is either 1 more
             # or 1 less column wise
             right = self.col + self.size
