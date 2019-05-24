@@ -15,10 +15,12 @@ Our program is made in python 3.7.1. Since there are no necessary pip installs, 
 ## Running the program
 
 To run our program, please read through the following documentation. Things to be filled in as argument will be **bold**:
+
+The usage looks as follows, please run in the main directory:
 ```
 python rushhour.py <board> <algorithm> <depth/breadth (for depth_first)> <pruning method> <movement method>
 ```
-Boards to choose from <board>: 
+#### Boards to choose from <board>: 
   - **easy**
   - **easy2**
   - **easy3**
@@ -27,23 +29,23 @@ Boards to choose from <board>:
   - **medium3**
   - **hard**
 
-Algorithms to choose from <algorithm>:
+#### Algorithms to choose from <algorithm>:
   - **breadth** (Breadth First Search)
   - **depth** (Depth First Search)
   - **depth_random** (Searches random into the depth)
   - **build_board** (Builds a random board)
   
-Movement Method <movement method>:
+#### Movement Method <movement method>:
   Please enter one of the following:
   - **all**: all cars make all possible movements.
   - **furthest**: all cars only make the furthest possible movements.
   
-Depth/Breadth limit <depth/breadth limit>:
+#### Depth/Breadth limit <depth/breadth limit>:
   - Depth: When running the depth first algorithm, please enter **an integer** as maximum depth. The algorithm will not consider boards which have more moves than the specified amount. 
 
   - Breadth (Optional): When running the breadth first algorithm, entering **an integer** as breadth limit will run an adjusted version of breadth first where a maximum ammount of new boards can be placed in the queue for each itereation. This maximum is given by the entered **integer**
   
-Different pruning for depth first <pruning method>:
+#### Different pruning for depth first <pruning method>:
   When running depth first, the method of pruning should be specified by typing:
     - **max**: if child is already in the archive > do not add child to stack
     - **min**: if child is already in the archive AND the depth of this child is higher than the depth of the node found in the archive > do not add child to stack
@@ -67,7 +69,7 @@ Choosing to run depth_random_optimalised search on the hard board would look lik
 python RushHour.py hard depth_random 10000 1000
 ```
 
-### Writing code in main
+#### Writing code in main
 If you need to find multiple solutions, a simple code can be written in main. If, for example, you would like to run depth_random 100 times on the hard board and save the solutions, the following code works:
 ```
 if __name__ == "__main__":
@@ -82,7 +84,7 @@ if another algortihm is wanted, dr.depth_random can be changed to (for example) 
 
 ## Output
 
-The algorithms that search to solve a board print the solution, the end state of the board, the time it took and the number of visited boards. They return the solution.
+The algorithms that search to solve a board print the solution, the end state of the board, the time it took and the number of visited boards (nodes). They return the solution.
 build_board, which builds a random board prints the board, and also returns this board
 
 ## Authors
