@@ -157,7 +157,7 @@ class Algorithm():
                 continue
 
             # Iterate through the move commands in s
-            for move_string in s:
+            for move_string in moves_list:
                 movement = self.execute_move_command(move_string)
                 dict_copy[move_string[0]] += movement
 
@@ -229,8 +229,11 @@ class Algorithm():
 
     def breadth_first(self, max_movement, breadth):
         """
-        Implementation of the breath first search algorithm for
-        the rush hour game.
+        Implementation of the breadth first search algorithm for
+        the rush hour game. Takes max_movement and breadth as input
+        if max_movement is True, only the maximum possible moves are
+        added, and if breadth > 0, the number of newly added boards from
+        a board is limited to the number inputted as breadth
         """
         nodes_at_treelevel = []
         node_counter = 0
@@ -296,7 +299,7 @@ class Algorithm():
                 print("Gewonnen!")
                 end = time.time()
                 print(f"time is {end - start}")
-                print(f"n = {n}")
+                print(f"n = {sum(nodes_at_treelevel)}")
                 print(self.rush_hour.board)
                 return nodes_at_treelevel
 
@@ -311,7 +314,6 @@ class Algorithm():
                     if counter >= breadth:
                         move_list.clear()
                         break
-
                     try:
                         move = random.choice(move_list)
                     except IndexError:

@@ -13,6 +13,7 @@ from board import Board
 from car import Car
 import bruteforce
 from random import randint
+import helpers
 import time
 import sys
 import copy
@@ -209,7 +210,7 @@ class RushHour():
         # Execute depthrandom method
         elif ((len(sys.argv)) == 4 and sys.argv[2] == "depth_random" and
                 sys.argv[1] in board_list and sys.argv[3].isnumeric()):
-            print("usage = <board> <method> <max depth>")
+            
             rush_hour = RushHour(sys.argv[1])
             df = Algorithm(rush_hour)
             df.depth_random(int(sys.argv[3]))
@@ -220,13 +221,19 @@ class RushHour():
             df = Algorithm(rush_hour)
             df.find_optimised_solution(int(sys.argv[3]), int(sys.argv[4]))
 
+        
+        elif ((len(sys.argv)) == 5 and sys.argv[1] == "build_board"):
+            board = helpers.create_random_board(int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]))
+            print (board)
+        
         else:
             print("usage: python RushHour.py <board> <method> <movement method>\
                     <depth/breadth (for depth_first)> \
                     <pruning method (for depth_first)> ")
-
+           
 
 if __name__ == "__main__":
 
-    rush_hour = RushHour(sys.argv[1])
+    rush_hour = RushHour("easy")
     rush_hour.play()
+ 
