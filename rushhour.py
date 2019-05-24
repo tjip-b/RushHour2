@@ -71,16 +71,16 @@ class RushHour():
             if sys.argv[3] == "all":
                 # Pruning method maximum or only prune off
                 # identical children with higher depth
-                if sys.argv[5] == "max":
+                if sys.argv[5] == "min":
                     df.depth_first(int(sys.argv[4]), True, False)
-                elif sys.argv[5] == "min":
+                elif sys.argv[5] == "max":
                     df.depth_first(int(sys.argv[4]), False, False)
                 else:
                     print("usage: please state 'min' or 'max' as 5th argument")
             elif sys.argv[3] == "furthest":
-                if sys.argv[5] == "max":
+                if sys.argv[5] == "min":
                     df.depth_first(int(sys.argv[4]), True, True)
-                elif sys.argv[5] == "min":
+                elif sys.argv[5] == "max":
                     df.depth_first(int(sys.argv[4]), False, True)
                 else:
                     print("usage: please explicitly state 'min' or \
