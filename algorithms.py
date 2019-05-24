@@ -145,7 +145,7 @@ class Algorithm():
             dict_copy = copy.deepcopy(cars_dictionary)
 
             # Take the first item from the stack and pop it.
-            s = stack.pop()
+            moves_list = stack.pop()
 
             # Print in which iteration we are and the current movelist
             print(f"n = {n}")
@@ -273,7 +273,7 @@ class Algorithm():
             dict_copy = copy.deepcopy(cars_dictionary)
 
             # Take the first item from the queue and pop it
-            s = queue.pop(0)
+            moves_list = queue.pop(0)
 
             # Gets the amount of nodes per depth level
             if len(s) == len_s + 1:
@@ -282,7 +282,7 @@ class Algorithm():
                 len_s = len(s)
 
             # Iterate through the move commands in s
-            for i in s:
+            for i in moves_list:
                 move = self.execute_move_command(i)
                 dict_copy[i[0]] += move
 
@@ -329,15 +329,15 @@ class Algorithm():
                         dict_copy2[move[0]] += int(move[2])
 
                     # Make a string of the dictionary
-                    x = str(dict_copy2)
+                    dict_string = str(dict_copy2)
 
                     # Check if the current set of moves leads to a board
                     # that has not been visited
-                    if x not in archive:
+                    if dict_string not in archive:
                         # If unique, add to the queue and the set
                         # with all the visited boards
                         queue.append(scopy)
-                        archive.add(x)
+                        archive.add(dict_string)
                         move_list.remove(move)
                         counter += 1
                     else:
@@ -360,49 +360,50 @@ class Algorithm():
                         dict_copy2[move[0]] += int(move[2])
 
                     # Make a string of the dictionary
-                    x = str(dict_copy2)
+                    dict_string = str(dict_copy2)
 
                     # Check if the current set of moves leads to a board
                     # that has not been visited
-                    if x not in archive:
-                        # if unique, add to the queue
+                    if dict_string not in archive:
+                        # If unique, add to the queue
                         # and the set with all the visited boards
                         queue.append(scopy)
-                        archive.add(x)
+                        archive.add(dict_string)
 
     def depth_random(self, depth):
         """
-        Random searches for a solution till a given depth. Returns the solution
+        Random searches for a solution till a given depth. Returns the solution.
         """
 
-        # set needed variables
+        # Set needed variables
         start = time.time()
         n = 0
 
-        # make a list with moveable cars
+        # Make a list with moveable cars
         moveable_cars = self.moves_list(depth)
 
-        # pick a random move
+        # Pick a random move
         move = random.choice(moveable_cars)
 
-        # make a set that contains all visited boards
+        # Make a set that contains all visited boards
         archive = set()
 
-        # make a dictionary that contains all cars with their netto movement
+        # Make a dictionary that contains all cars with their netto movement
         cars_dictionary = {}
         for car in self.rush_hour.cars:
             cars_dictionary[car.name[0]] = 0
 
-        # append dictionary to set. it is added as a string to the set so it can be hashed.
+        # Append dictionary to set. it is added as a string
+        # to the set so it can be hashed.
         archive.add(str(cars_dictionary))
 
-        # make a list that will contain all executed moves
-        s = []
+        # Make a list that will contain all executed moves
+        moves_list = []
 
         while n < depth:
             n += 1
 
-            # execute move and save it in the dictionary
+            # Execute move and save it in the dictionary
             self.execute_move_command(move)
             if move[1] == "+":
                 movement = int(move[2])
@@ -411,57 +412,58 @@ class Algorithm():
 
             cars_dictionary[move[0]] += movement
 
-            # save all done moves
-            s.append(move)
+            # Save all done moves
+            moves_list.append(move)
 
-            # build the board
+            # Build the board
             self.rush_hour.board = helpers.build(
                 self.rush_hour.board.width_height + 1, self.rush_hour.cars)
 
             if self.check_if_won() == True:
-                print(s)
+                print(moves_list)
                 print("Gewonnen!")
                 end = time.time()
                 print(f"time is {end - start}")
                 print(f"n = {n}")
                 print(self.rush_hour.board)
-                return s
+                return moves_list
 
-            # check all possible moves for each car and add them to a list
+            # Check all possible moves for each car and add them to a list
             moveable_cars = self.moves_list(True)
 
-            # return
+            # Return
             for i in range(0, 1000000):
                 try:
                     move = random.choice(moveable_cars)
 
-                # if no moves, return False
+                # If no moves, return False
                 except IndexError:
                     print("geen zetten meer!")
                     return False
 
-                # copy and update the dictionary with the netto car positions
-                dictcopy2 = copy.deepcopy(cars_dictionary)
+                # Copy and update the dictionary with the netto car positions
+                dict_copy = copy.deepcopy(cars_dictionary)
                 if move[1] == "+":
                     movement = int(move[2])
                 else:
                     movement = -int(move[2])
-                dictcopy2[move[0]] += movement
+                dict_copy[move[0]] += movement
 
-                # make a string of the dictionary
-                x = str(dictcopy2)
+                # Make a string of the dictionary
+                dict_string = str(dict_copy)
 
-                # check if the current set of moves leads to a board that has not been visited
-                if x not in archive:
-                    archive.add(x)
+                # Check if the current set of moves leads to a board
+                # that has not been visited
+                if dict_string not in archive:
+                    archive.add(dict_string)
                     # print(move)
                     break
 
-                # if not, remove the car from moveable cars
+                # If not, remove the car from moveable cars
                 else:
                     moveable_cars.remove(move)
         print("geen oplossing")
-        return s
+        return moves_list
 
     def find_solution(self, maximum_depth):
         """
@@ -518,10 +520,10 @@ class Algorithm():
 
             while depth > search_length - 1:
                 bf = copy.deepcopy(Algorithm(board_copy))
-                s = bf.depth_random(depth)
-                if s is not False:
-                    depth = len(s)
-            List.extend(s)
+                moves_list = bf.depth_random(depth)
+                if moves_list is not False:
+                    depth = len(moves_list)
+            List.extend(moves_list)
 
         # If desired depth is found, return moves.
         return List
