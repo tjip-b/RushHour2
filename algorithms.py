@@ -152,7 +152,7 @@ class Algorithm():
             n += 1
 
             # Check current tree depth
-            current_depth = len(s)
+            current_depth = len(moves_list)
             if current_depth > max_depth:
                 continue
 
@@ -168,19 +168,19 @@ class Algorithm():
 
             # Check if a solution is found
             if self.check_if_won() == True:
-                print(s)
+                print(moves_list)
                 print("Gewonnen!")
                 end = time.time()
                 print(f"time is {end - start}")
                 print(f"n = {n}")
                 print(self.rush_hour.board)
-                print(f"amount of moves / depth: {len(s)}")
+                print(f"amount of moves / depth: {len(moves_list)}")
                 return True
 
             if depth_pruning:
                 # Add netto movements (equivalent to positions on the board)
                 # to archive
-                archive[(str(dict_copy))] = len(s)
+                archive[(str(dict_copy))] = len(moves_list)
 
             # Make all possible moves
             move_list = self.moves_list(max_movement)
@@ -189,7 +189,7 @@ class Algorithm():
             for move in move_list:
 
                 # Copy the moves that led to the present board
-                scopy = copy.deepcopy(s)
+                scopy = copy.deepcopy(moves_list)
 
                 # Append the new move
                 scopy.append(move)
@@ -276,10 +276,10 @@ class Algorithm():
             moves_list = queue.pop(0)
 
             # Gets the amount of nodes per depth level
-            if len(s) == len_s + 1:
+            if len(moves_list) == len_s + 1:
                 nodes_at_treelevel.append(node_counter)
                 node_counter = 0
-                len_s = len(s)
+                len_s = len(moves_list)
 
             # Iterate through the move commands in s
             for i in moves_list:
@@ -292,7 +292,7 @@ class Algorithm():
 
             # Check if a solution is found
             if self.check_if_won() == True:
-                print(s)
+                print(moves_list)
                 print("Gewonnen!")
                 end = time.time()
                 print(f"time is {end - start}")
@@ -317,7 +317,7 @@ class Algorithm():
                     except IndexError:
                         break
 
-                    scopy = copy.deepcopy(s)
+                    scopy = copy.deepcopy(moves_list)
 
                     # Append the new move
                     scopy.append(move)
@@ -347,7 +347,7 @@ class Algorithm():
                 for move in move_list:
 
                     # Copy the moves that led to the present board
-                    scopy = copy.deepcopy(s)
+                    scopy = copy.deepcopy(moves_list)
 
                     # Append the new move
                     scopy.append(move)
@@ -470,10 +470,10 @@ class Algorithm():
         Runs Depth random until it finds a solution
         with a depth lower than maximum depth.
         """
-        Copy = copy.deepcopy(self.rush_hour)
+        rush_hour_copy = copy.deepcopy(self.rush_hour)
         depth = maximum_depth + 1
         while depth > maximum_depth:
-            self.rush_hour = copy.deepcopy(Copy)
+            self.rush_hour = copy.deepcopy(rush_hour_copy)
             solution = self.depth_random(depth)
             if solution is not False:
                 depth = len(solution)
@@ -486,7 +486,7 @@ class Algorithm():
         given by move_list and tries to shorten this solution.
         """
 
-        Copy = copy.deepcopy(self.rush_hour)
+        rush_hour_copy = copy.deepcopy(self.rush_hour)
         List = move_list
 
         # Iterate till asked depth is reached
@@ -500,7 +500,7 @@ class Algorithm():
             print(f"the length of the list = {len(List)}")
             print(List)
 
-            self.rush_hour = copy.deepcopy(Copy)
+            self.rush_hour = copy.deepcopy(rush_hour_copy)
 
             # Take half of the given move list
             List = List[0:len(List)-search_length]
@@ -534,8 +534,8 @@ class Algorithm():
         The max_1 is the depth limit till which find_solution searches,
         max_2 is the depth limit till which it is optimised.
         """
-        Copy = copy.deepcopy(self)
+        rush_hour_copy = copy.deepcopy(self)
         List = self.find_solution(max_1)
-        self = copy.deepcopy(Copy)
+        self = copy.deepcopy(rush_hour_copy)
         optimised_list = self.optimalize_solution(max_2, List)
         return optimised_list
