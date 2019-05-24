@@ -233,7 +233,7 @@ class RushHour():
            
 
 if __name__ == "__main__":
-
+    
     rush_hour = RushHour("easy")
     rush_hour.play()
  
