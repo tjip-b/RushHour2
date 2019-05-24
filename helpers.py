@@ -1,6 +1,5 @@
 from car import Car
 from board import Board
-import bruteforce
 import copy
 import random
 import algorithms
