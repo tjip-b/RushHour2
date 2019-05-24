@@ -46,9 +46,9 @@ python rushhour.py <board> <algorithm> <depth/breadth (for depth_first)> <prunin
   - Breadth (Optional): When running the breadth first algorithm, entering **an integer** as breadth limit will run an adjusted version of breadth first where a maximum ammount of new boards can be placed in the queue for each itereation. This maximum is given by the entered **integer**
   
 #### Different pruning for depth first <pruning method>:
-  When running depth first, the method of pruning should be specified by typing:
-    - **max**: if child is already in the archive > do not add child to stack
-    - **min**: if child is already in the archive AND the depth of this child is higher than the depth of the node found in the archive > do not add child to stack
+When running depth first, the method of pruning should be specified by typing:
+  - **max** : if child is already in the archive > do not add child to stack
+  - **min** : if child is already in the archive AND the depth of this child is higher than the depth of the node found in the archive > do not add child to stack
   
 - depth_random: depth random has two options, depth_random which takes **an integer** as depth limit till which it searches for a solution, and depth_random_optimalised which takes **an integer** and **an integer** as input. The first **integer** defines the max depth beneath which depth_random searches for a solution till it's found. The second **integer** improves this solution to a depth below **integer** 
   
