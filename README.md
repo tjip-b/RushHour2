@@ -60,7 +60,7 @@ python RushHour.py easy2 depth all 50 max
 
 Choosing to run depth_random_optimalised search on the hard board would look like this:
 ```
-python RushHour.py hard depth_random 10000 1000
+python RushHour.py hard depth_random_optimalised 10000 1000
 ```
 
 #### Board builder
