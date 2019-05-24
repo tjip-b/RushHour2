@@ -50,7 +50,7 @@ Different pruning for depth first <pruning method>:
   
 - depth_random: depth random has two options, depth_random which takes **an integer** as depth limit till which it searches for a solution, and depth_random_optimalised which takes **an integer** and **an integer** as input. The first **integer** defines the max depth beneath which depth_random searches for a solution till it's found. The second **integer** improves this solution to a depth below **integer** 
 
--build_board has the following input: 
+- build_board has the following input: 
 python rushhour.py build_board <size of board> <number of size 2 cars> <number of size 3 cars> 
 building 9x9 board with 12 cars with size 2 and 8 cars with size 3 would look like this:
 ```
@@ -88,7 +88,7 @@ build_board, which builds a random board prints the board, and also returns this
 
 * **Kevin Dekker**
   **Siebren Kazemier**
-  **Tjip Bischoff
+  **Tjip Bischoff**
 
 ## License
 
@@ -96,8 +96,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
+* Edwin, Daan & Wouter from the programming minor at the University of Amsterdam:
 * Erik
-from the programming minor at the University of Amsterdam:
-* Edwin, Daan & Wouter
-
 
