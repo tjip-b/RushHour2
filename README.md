@@ -97,8 +97,8 @@ build_board, which builds a random board prints the board, and also returns this
 ## Authors
 
 * **Kevin Dekker**
-  **Siebren Kazemier**
-  **Tjip Bischoff**
+* **Siebren Kazemier**
+* **Tjip Bischoff**
 
 ## Acknowledgments
 
