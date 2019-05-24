@@ -16,6 +16,7 @@ from random import randint
 import time
 import sys
 import copy
+import load
 from algorithms import Algorithm
 
 
@@ -25,8 +26,8 @@ class RushHour():
     """
 
     def __init__(self, game):
-        self.board = self.load_board(f"data/{game}.txt")
-        self.cars = self.load_cars()
+        self.board = load.load_board(f"data/{game}.txt")
+        self.cars = load.load_cars(self.board)
         self.initial_board = copy.deepcopy(self.board)
         self.initial_cars = copy.deepcopy(self.cars)
 
