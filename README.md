@@ -9,7 +9,7 @@ Our data structure consists of modules, with functions and classes. We have four
 
 ## Getting Started
 
-No need for requirement.txt. Based only on pyhton 3.7. Should run out of the box
+Our program is made in python 3.7.1. Since there are no necessary pip installs, the requirements.txt is intentionally missing from our repository.
 
 
 ## Running the program
@@ -84,15 +84,12 @@ if another algortihm is wanted, dr.depth_random can be changed to (for example) 
 
 The algorithms that search to solve a board print the solution, the end state of the board, the time it took and the number of visited boards. They return the solution.
 build_board, which builds a random board prints the board, and also returns this board
+
 ## Authors
 
 * **Kevin Dekker**
   **Siebren Kazemier**
   **Tjip Bischoff**
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 
